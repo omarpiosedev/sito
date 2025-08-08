@@ -11,11 +11,11 @@ export declare function formatDate(
   date: Date,
   options?: Intl.DateTimeFormatOptions
 ): string;
-export declare function debounce<T extends (...args: any[]) => any>(
+export declare function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void;
-export declare function throttle<T extends (...args: any[]) => any>(
+export declare function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void;
