@@ -1,7 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ShaderBackground from '../reactbits/Backgrounds/waves/waves';
+import { Timeline } from '../ui/timeline';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Componente LiquidGlassContainer semplificato
 const LiquidGlassContainer = ({ children }: { children: React.ReactNode }) => {
@@ -64,46 +69,170 @@ const GlassFilter = () => {
 };
 
 const About = () => {
-  return (
-    <section id="about" className="min-h-screen relative -mt-1">
-      <ShaderBackground
-        className="absolute inset-0 z-0"
-        color="#ff0000"
-        backdropBlurAmount="none"
-      />
-      {/* Fade overlay per bordi top e bottom */}
-      <div className="absolute inset-0 z-5 pointer-events-none">
-        {/* Fade top più intenso su mobile - esteso oltre il bordo */}
-        <div className="absolute -top-2 left-0 w-full h-44 sm:h-36 md:h-44 bg-gradient-to-b from-black via-black/90 via-black/70 via-black/40 to-transparent"></div>
-        {/* Fade bottom più intenso su mobile */}
-        <div className="absolute bottom-0 left-0 w-full h-40 sm:h-32 md:h-40 bg-gradient-to-t from-black via-black/90 via-black/70 via-black/40 to-transparent"></div>
-      </div>
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
-        <div className="max-w-6xl text-center">
-          <LiquidGlassContainer>
-            <div className="text-white uppercase">
-              <p
-                className="text-2xl md:text-3xl lg:text-4xl font-normal drop-shadow-lg leading-tight"
-                style={{
-                  fontFamily: 'Anton, sans-serif',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                I&apos;m an Italian digital designer and web developer
-                <br />
-                with years of experience, blending design, animation,
-                <br />
-                and code into seamless digital experiences.
-                <br />
-                I don&apos;t just build websites — I craft stories
-                <br />
-                that move, interact, and inspire. My work lives
-                <br />
-                at the sweet spot where creativity meets technology.
-              </p>
-            </div>
-          </LiquidGlassContainer>
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  // Dati per la Timeline
+  const timelineData = [
+    {
+      title: "2018",
+      content: (
+        <div>
+          <p className="text-white text-xs md:text-sm font-normal mb-8">
+            Started my journey in web development, learning the fundamentals of HTML, CSS, and JavaScript.
+            Created my first websites and fell in love with bringing designs to life through code.
+          </p>
         </div>
+      ),
+    },
+    {
+      title: "2020",
+      content: (
+        <div>
+          <p className="text-white text-xs md:text-sm font-normal mb-8">
+            Expanded into modern frameworks like React and Vue.js. Started working with clients and building 
+            more complex, interactive web applications with focus on user experience.
+          </p>
+        </div>
+      ),
+    },
+    {
+      title: "2022",
+      content: (
+        <div>
+          <p className="text-white text-xs md:text-sm font-normal mb-8">
+            Mastered advanced animations with GSAP and Framer Motion. Started creating immersive digital 
+            experiences that blend design, animation, and storytelling into cohesive user journeys.
+          </p>
+        </div>
+      ),
+    },
+    {
+      title: "2024",
+      content: (
+        <div>
+          <p className="text-white text-xs md:text-sm font-normal mb-4">
+            Currently focused on creating cutting-edge digital experiences that push the boundaries of 
+            web technology. Specializing in Next.js, TypeScript, and creating seamless interactions 
+            that tell compelling stories.
+          </p>
+          <div className="mb-8">
+            <div className="flex gap-2 items-center text-white text-xs md:text-sm">
+              ✨ Advanced Web Technologies
+            </div>
+            <div className="flex gap-2 items-center text-white text-xs md:text-sm">
+              🎨 Interactive Design Systems  
+            </div>
+            <div className="flex gap-2 items-center text-white text-xs md:text-sm">
+              🚀 Performance Optimization
+            </div>
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  useEffect(() => {
+    const textElement = textRef.current;
+    if (!textElement) return;
+
+    // Salvo il contenuto di testo originale (senza HTML)
+    const originalText = textElement.textContent || '';
+    
+    // Divido in caratteri e ricostruisco con <br /> nelle posizioni giuste
+    const lines = [
+      "I'm an Italian digital designer and web developer",
+      "with years of experience, blending design, animation,",
+      "and code into seamless digital experiences.",
+      "I don't just build websites — I craft stories",
+      "that move, interact, and inspire. My work lives",
+      "at the sweet spot where creativity meets technology."
+    ];
+    
+    const wrappedHTML = lines.map(line => {
+      return line.split('').map(char => 
+        char === ' ' ? ' ' : `<span class="char" style="color: #666666; opacity: 0.3; display: inline;">${char}</span>`
+      ).join('');
+    }).join('<br />');
+    
+    textElement.innerHTML = wrappedHTML;
+    
+    const charElements = textElement.querySelectorAll('.char');
+
+    // Animazione carattere per carattere
+    gsap.fromTo(
+      charElements,
+      { 
+        color: '#666666', 
+        opacity: 0.3 
+      },
+      {
+        color: '#ffffff',
+        opacity: 1,
+        ease: 'none',
+        stagger: 0.015, // Velocità illuminazione carattere per carattere
+        scrollTrigger: {
+          trigger: textElement,
+          start: 'top bottom-=10%',
+          end: 'center center', 
+          scrub: 1,
+        },
+      }
+    );
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
+  return (
+    <section id="about" className="relative -mt-1">
+      {/* Sezione con il testo animato - mantiene il background rosso */}
+      <div className="min-h-screen relative">
+        <ShaderBackground
+          className="absolute inset-0 z-0"
+          color="#ff0000"
+          backdropBlurAmount="none"
+        />
+        {/* Fade overlay per bordi top e bottom */}
+        <div className="absolute inset-0 z-5 pointer-events-none">
+          {/* Fade top più intenso su mobile - esteso oltre il bordo */}
+          <div className="absolute -top-2 left-0 w-full h-44 sm:h-36 md:h-44 bg-gradient-to-b from-black via-black/90 via-black/70 via-black/40 to-transparent"></div>
+          {/* Fade bottom più intenso su mobile */}
+          <div className="absolute bottom-0 left-0 w-full h-40 sm:h-32 md:h-40 bg-gradient-to-t from-black via-black/90 via-black/70 via-black/40 to-transparent"></div>
+        </div>
+        <div className="relative z-10 min-h-screen flex items-center justify-center px-6">
+          <div className="max-w-6xl text-center">
+            <LiquidGlassContainer>
+              <div className="text-white uppercase">
+                <p
+                  ref={textRef}
+                  className="text-2xl md:text-3xl lg:text-4xl font-normal drop-shadow-lg leading-tight"
+                  style={{
+                    fontFamily: 'Anton, sans-serif',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  I&apos;m an Italian digital designer and web developer
+                  <br />
+                  with years of experience, blending design, animation,
+                  <br />
+                  and code into seamless digital experiences.
+                  <br />
+                  I don&apos;t just build websites — I craft stories
+                  <br />
+                  that move, interact, and inspire. My work lives
+                  <br />
+                  at the sweet spot where creativity meets technology.
+                </p>
+              </div>
+            </LiquidGlassContainer>
+          </div>
+        </div>
+      </div>
+      
+      {/* Timeline Section con background nero */}
+      <div className="bg-black">
+        <Timeline data={timelineData} />
       </div>
     </section>
   );
