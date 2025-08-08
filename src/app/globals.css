@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @font-face {
   font-family: 'Anton';
@@ -128,4 +128,3 @@
     @apply bg-background text-foreground;
   }
 }
-

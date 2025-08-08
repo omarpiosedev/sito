@@ -167,7 +167,7 @@
 /* Animated Gradient Border Button Property and Animation */
 /* @property MUST be defined at the global scope, not inside a rule */
 @property --border-angle {
-  syntax: "<angle>";
+  syntax: '<angle>';
   inherits: true;
   initial-value: 0turn;
 }
@@ -323,7 +323,7 @@ body {
 }
 .command-dialog-open::after,
 .popover-open::after {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
   z-index: 39;

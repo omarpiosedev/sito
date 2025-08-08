@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,26 +14,31 @@ export default function Navbar() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Left - Nome */}
-          <div className="text-lg font-bold">
-            OMAR PIOSELLI
-          </div>
+          <div className="text-lg font-bold">OMAR PIOSELLI</div>
 
           {/* Center - Menu button (Desktop) */}
-          <div className="hidden md:flex flex-col items-center cursor-pointer" onClick={toggleMenu}>
+          <div
+            className="hidden md:flex flex-col items-center cursor-pointer"
+            onClick={toggleMenu}
+          >
             <div className="w-8 h-0.5 bg-white mb-1"></div>
             <span className="text-sm font-medium">MENU</span>
           </div>
 
           {/* Right - Contattami (Desktop) */}
-          <div className="hidden md:block text-lg font-bold">
-            CONTATTAMI
-          </div>
+          <div className="hidden md:block text-lg font-bold">CONTATTAMI</div>
 
           {/* Mobile - Hamburger Menu */}
           <div className="md:hidden cursor-pointer" onClick={toggleMenu}>
-            <div className={`w-6 h-0.5 bg-white mb-1.5 transition-transform duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
-            <div className={`w-6 h-0.5 bg-white mb-1.5 transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></div>
-            <div className={`w-6 h-0.5 bg-white transition-transform duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
+            <div
+              className={`w-6 h-0.5 bg-white mb-1.5 transition-transform duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}
+            ></div>
+            <div
+              className={`w-6 h-0.5 bg-white mb-1.5 transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}
+            ></div>
+            <div
+              className={`w-6 h-0.5 bg-white transition-transform duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}
+            ></div>
           </div>
         </div>
       </div>
@@ -44,33 +49,57 @@ export default function Navbar() {
           <div className="container mx-auto px-4 py-8">
             <ul className="space-y-6 text-center">
               <li>
-                <a href="#home" className="text-xl hover:text-gray-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                <a
+                  href="#home"
+                  className="text-xl hover:text-gray-300 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   HOME
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-xl hover:text-gray-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                <a
+                  href="#about"
+                  className="text-xl hover:text-gray-300 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   CHI SONO
                 </a>
               </li>
               <li>
-                <a href="#projects" className="text-xl hover:text-gray-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                <a
+                  href="#projects"
+                  className="text-xl hover:text-gray-300 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   PROGETTI
                 </a>
               </li>
               <li>
-                <a href="#services" className="text-xl hover:text-gray-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                <a
+                  href="#services"
+                  className="text-xl hover:text-gray-300 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   SERVIZI
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-xl hover:text-gray-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                <a
+                  href="#contact"
+                  className="text-xl hover:text-gray-300 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   CONTATTI
                 </a>
               </li>
               {/* Contattami per mobile */}
               <li className="md:hidden pt-4 border-t border-white/20">
-                <a href="#contact" className="text-xl font-bold hover:text-gray-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                <a
+                  href="#contact"
+                  className="text-xl font-bold hover:text-gray-300 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   CONTATTAMI
                 </a>
               </li>

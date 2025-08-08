@@ -1,9 +1,9 @@
- /*Ensure you had installed the package
+/*Ensure you had installed the package
 or read our installation document. (go to lightswind.com/components/Installation)
 npm i lightswind@latest*/
 
-"use client";
-import { useEffect, useRef, useState } from "react";
+'use client';
+import React, { useEffect, useRef, useState, ReactElement } from 'react';
 
 const vertexShaderSource = `
   attribute vec4 a_position;
@@ -52,7 +52,7 @@ void main() {
 /**
  * Valid blur sizes supported by Tailwind CSS.
  */
-export type BlurSize = "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
+export type BlurSize = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 
 /**
  * @typedef {Object} ShaderBackgroundProps
@@ -74,13 +74,13 @@ interface ShaderBackgroundProps {
  * This ensures Tailwind's JIT mode can correctly detect and generate the CSS.
  */
 const blurClassMap: Record<BlurSize, string> = {
-  none: "backdrop-blur-none",
-  sm: "backdrop-blur-sm",
-  md: "backdrop-blur-md",
-  lg: "backdrop-blur-lg",
-  xl: "backdrop-blur-xl",
-  "2xl": "backdrop-blur-2xl",
-  "3xl": "backdrop-blur-3xl",
+  none: 'backdrop-blur-none',
+  sm: 'backdrop-blur-sm',
+  md: 'backdrop-blur-md',
+  lg: 'backdrop-blur-lg',
+  xl: 'backdrop-blur-xl',
+  '2xl': 'backdrop-blur-2xl',
+  '3xl': 'backdrop-blur-3xl',
 };
 
 /**
@@ -92,10 +92,10 @@ const blurClassMap: Record<BlurSize, string> = {
  * @returns {JSX.Element} The rendered ShaderBackground component.
  */
 function ShaderBackground({
-  backdropBlurAmount = "sm",
-  color = "#07eae6ff", // Default purple color
-  className = "",
-}: ShaderBackgroundProps): JSX.Element {
+  backdropBlurAmount = 'sm',
+  color = '#07eae6ff', // Default purple color
+  className = '',
+}: ShaderBackgroundProps): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
@@ -112,9 +112,9 @@ function ShaderBackground({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext("webgl");
+    const gl = canvas.getContext('webgl');
     if (!gl) {
-      console.error("WebGL not supported");
+      console.error('WebGL not supported');
       return;
     }
 
@@ -127,7 +127,7 @@ function ShaderBackground({
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error("Shader compilation error:", gl.getShaderInfoLog(shader));
+        console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
         return null;
       }
@@ -148,7 +148,7 @@ function ShaderBackground({
     gl.linkProgram(program);
 
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error("Program linking error:", gl.getProgramInfoLog(program));
+      console.error('Program linking error:', gl.getProgramInfoLog(program));
       return;
     }
 
@@ -162,16 +162,16 @@ function ShaderBackground({
       gl.STATIC_DRAW
     );
 
-    const positionLocation = gl.getAttribLocation(program, "a_position");
+    const positionLocation = gl.getAttribLocation(program, 'a_position');
     gl.enableVertexAttribArray(positionLocation);
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-    const iResolutionLocation = gl.getUniformLocation(program, "iResolution");
-    const iTimeLocation = gl.getUniformLocation(program, "iTime");
-    const iMouseLocation = gl.getUniformLocation(program, "iMouse");
-    const uColorLocation = gl.getUniformLocation(program, "u_color"); // Get uniform location for custom color
+    const iResolutionLocation = gl.getUniformLocation(program, 'iResolution');
+    const iTimeLocation = gl.getUniformLocation(program, 'iTime');
+    const iMouseLocation = gl.getUniformLocation(program, 'iMouse');
+    const uColorLocation = gl.getUniformLocation(program, 'u_color'); // Get uniform location for custom color
 
-    let startTime = Date.now();
+    const startTime = Date.now();
 
     // Set the initial color
     const [r, g, b] = hexToRgb(color);
@@ -215,29 +215,29 @@ function ShaderBackground({
       setMousePosition({ x: 0, y: 0 });
     };
 
-    canvas.addEventListener("mousemove", handleMouseMove);
-    canvas.addEventListener("mouseenter", handleMouseEnter);
-    canvas.addEventListener("mouseleave", handleMouseLeave);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseenter', handleMouseEnter);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
 
     render();
 
     return () => {
-      canvas.removeEventListener("mousemove", handleMouseMove);
-      canvas.removeEventListener("mouseenter", handleMouseEnter);
-      canvas.removeEventListener("mouseleave", handleMouseLeave);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseenter', handleMouseEnter);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [isHovering, mousePosition, color]); // Add color to the dependency array
 
   // Get the correct Tailwind CSS class from the map
   const finalBlurClass =
-    blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap["sm"];
+    blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap['sm'];
 
   return (
     <div className={`w-full max-w-screen h-full overflow-hidden ${className}`}>
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full max-w-screen h-full overflow-hidden"
-        style={{ display: "block" }}
+        style={{ display: 'block' }}
       />
       {/* Apply the mapped Tailwind CSS class for backdrop blur */}
       <div className={`absolute inset-0 ${finalBlurClass}`}></div>

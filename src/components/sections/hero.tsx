@@ -1,5 +1,5 @@
-import Image from "next/image";
-import ScrollVelocity from "@/components/reactbits/TextAnimations/ScrollVelocity/ScrollVelocity";
+import Image from 'next/image';
+import ScrollVelocity from '@/components/reactbits/TextAnimations/ScrollVelocity/ScrollVelocity';
 
 export default function Hero() {
   return (
@@ -7,7 +7,7 @@ export default function Hero() {
       {/* Testo scorrevole dietro l'immagine */}
       <div className="absolute inset-0 flex items-center justify-center">
         <ScrollVelocity
-          texts={["OMARPIOSELLI"]}
+          texts={['OMARPIOSELLI']}
           velocity={-50}
           className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-white/10 tracking-tighter"
           parallaxClassName="w-full"
@@ -27,7 +27,8 @@ export default function Hero() {
       {/* Scritta in basso */}
       <div className="absolute bottom-4 left-0 right-0 text-center z-10">
         <p className="text-sm md:text-base leading-relaxed text-white">
-          AN INDEPENDENT CREATIVE WEB DEVELOPER<br />
+          AN INDEPENDENT CREATIVE WEB DEVELOPER
+          <br />
           BASED IN ITALY
         </p>
       </div>

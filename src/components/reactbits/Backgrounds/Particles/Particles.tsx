@@ -2,10 +2,10 @@
 	Installed from https://reactbits.dev/ts/tailwind/
 */
 
-"use client";
+'use client';
 
-import React, { useEffect, useRef } from "react";
-import { Renderer, Camera, Geometry, Program, Mesh } from "ogl";
+import React, { useEffect, useRef } from 'react';
+import { Renderer, Camera, Geometry, Program, Mesh } from 'ogl';
 
 interface ParticlesProps {
   particleCount?: number;
@@ -22,15 +22,15 @@ interface ParticlesProps {
   className?: string;
 }
 
-const defaultColors: string[] = ["#ffffff", "#ffffff", "#ffffff"];
+const defaultColors: string[] = ['#ffffff', '#ffffff', '#ffffff'];
 
 const hexToRgb = (hex: string): [number, number, number] => {
-  hex = hex.replace(/^#/, "");
+  hex = hex.replace(/^#/, '');
   if (hex.length === 3) {
     hex = hex
-      .split("")
-      .map((c) => c + c)
-      .join("");
+      .split('')
+      .map(c => c + c)
+      .join('');
   }
   const int = parseInt(hex, 16);
   const r = ((int >> 16) & 255) / 255;
@@ -133,7 +133,7 @@ const Particles: React.FC<ParticlesProps> = ({
       renderer.setSize(width, height);
       camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
     };
-    window.addEventListener("resize", resize, false);
+    window.addEventListener('resize', resize, false);
     resize();
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -144,7 +144,7 @@ const Particles: React.FC<ParticlesProps> = ({
     };
 
     if (moveParticlesOnHover) {
-      container.addEventListener("mousemove", handleMouseMove);
+      container.addEventListener('mousemove', handleMouseMove);
     }
 
     const count = particleCount;
@@ -168,7 +168,7 @@ const Particles: React.FC<ParticlesProps> = ({
       positions.set([x * r, y * r, z * r], i * 3);
       randoms.set(
         [Math.random(), Math.random(), Math.random(), Math.random()],
-        i * 4,
+        i * 4
       );
       const col = hexToRgb(palette[Math.floor(Math.random() * palette.length)]);
       colors.set(col, i * 3);
@@ -228,9 +228,9 @@ const Particles: React.FC<ParticlesProps> = ({
     animationFrameId = requestAnimationFrame(update);
 
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener('resize', resize);
       if (moveParticlesOnHover) {
-        container.removeEventListener("mousemove", handleMouseMove);
+        container.removeEventListener('mousemove', handleMouseMove);
       }
       cancelAnimationFrame(animationFrameId);
       if (container.contains(gl.canvas)) {
