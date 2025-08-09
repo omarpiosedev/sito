@@ -1,5 +1,6 @@
 import Hero from '@/components/sections/hero';
 import About from '@/components/sections/About';
+import Projects from '@/components/sections/Projects';
 import SectionDivider from '@/components/sections/SectionDivider';
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
         textClassName="text-5xl md:text-7xl lg:text-9xl font-bold text-white/10 tracking-tighter uppercase"
       />
       <About />
+      <Projects />
     </main>
   );
 }
