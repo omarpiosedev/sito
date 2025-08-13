@@ -94,15 +94,15 @@ const config: Config = {
     '^@/components/(.*)$': '<rootDir>/src/components/$1',
     '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
     '^@/app/(.*)$': '<rootDir>/src/app/$1',
-    
+
     // Handle CSS imports
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
-    
+
     // Handle static assets
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff2|mp4|webm|wav|mp3|m4a|aac|oga|avif|ico|bmp)$':
       '<rootDir>/__mocks__/fileMock.js',
-    
+
     // Handle Next.js fonts
     '@next/font/(.*)': '<rootDir>/__mocks__/nextFontMock.js',
     'next/font/(.*)': '<rootDir>/__mocks__/nextFontMock.js',

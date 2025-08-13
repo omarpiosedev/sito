@@ -450,7 +450,7 @@ export default function NavBar({ className }: NavBarProps) {
                         'PROCESS',
                         'FEEDBACKS',
                       ].map((item, index) => {
-                        const sectionMap = {
+                        const sectionMap: Record<string, string> = {
                           HOME: 'home',
                           'ABOUT ME': 'about',
                           PROJECTS: 'projects',

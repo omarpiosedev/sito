@@ -51,7 +51,7 @@ jest.mock('@/components/sections/Footer', () => {
 });
 
 jest.mock('@/components/sections/SectionDivider', () => {
-  return function MockSectionDivider(props: any) {
+  return function MockSectionDivider(props: { text: string }) {
     return (
       <div data-testid="section-divider" data-text={props.text}>
         Section Divider: {props.text}
@@ -81,14 +81,14 @@ describe('Home Page', () => {
     it('renders main element with correct structure', () => {
       const { container } = render(<Home />);
       const main = container.querySelector('main');
-      
+
       expect(main).toBeInTheDocument();
       expect(main).toHaveClass('relative', 'z-10');
     });
 
     it('renders all main sections', () => {
       const { getByTestId } = render(<Home />);
-      
+
       expect(getByTestId('hero')).toBeInTheDocument();
       expect(getByTestId('about')).toBeInTheDocument();
       expect(getByTestId('projects')).toBeInTheDocument();
@@ -103,34 +103,41 @@ describe('Home Page', () => {
   describe('Section Dividers', () => {
     it('renders ABOUT ME section divider', () => {
       const { getAllByTestId } = render(<Home />);
-      
+
       const dividers = getAllByTestId('section-divider');
-      const aboutDivider = dividers.find(div => div.getAttribute('data-text') === 'ABOUT ME');
+      const aboutDivider = dividers.find(
+        div => div.getAttribute('data-text') === 'ABOUT ME'
+      );
       expect(aboutDivider).toBeDefined();
       expect(aboutDivider).toHaveAttribute('data-text', 'ABOUT ME');
     });
 
     it('renders all section dividers with correct text', () => {
       const { getAllByTestId } = render(<Home />);
-      
+
       const dividers = getAllByTestId('section-divider');
       expect(dividers).toHaveLength(4); // ABOUT ME, CAPABILITIES, PROCESS, CONTACT
-      
+
       const dividerTexts = dividers.map(div => div.getAttribute('data-text'));
-      expect(dividerTexts).toEqual(['ABOUT ME', 'CAPABILITIES', 'PROCESS', 'CONTACT']);
+      expect(dividerTexts).toEqual([
+        'ABOUT ME',
+        'CAPABILITIES',
+        'PROCESS',
+        'CONTACT',
+      ]);
     });
   });
 
   describe('Page Structure', () => {
     it('maintains correct component hierarchy', () => {
       const { container, getByTestId } = render(<Home />);
-      
+
       // Verifica la presenza del React Fragment root
       expect(container.firstChild).toBeDefined();
-      
+
       // Verifica che ScrollingBanner sia presente
       expect(getByTestId('scrolling-banner')).toBeInTheDocument();
-      
+
       // Verifica che main sia presente con contenuto
       const main = container.querySelector('main');
       expect(main).toBeInTheDocument();
@@ -139,17 +146,17 @@ describe('Home Page', () => {
 
     it('has correct CSS classes on main container', () => {
       const { container } = render(<Home />);
-      
+
       const main = container.querySelector('main');
       expect(main).toHaveClass('relative', 'z-10');
-      
+
       const bgContainer = main?.querySelector('.bg-black');
       expect(bgContainer).toBeInTheDocument();
     });
 
     it('includes transparent spacer div at the end', () => {
       const { container } = render(<Home />);
-      
+
       // Cerca il div con altezza 48 (h-48)
       const spacerDiv = container.querySelector('.h-48');
       expect(spacerDiv).toBeInTheDocument();
@@ -159,7 +166,7 @@ describe('Home Page', () => {
   describe('Special Styling and Layout', () => {
     it('renders process section with special z-index styling', () => {
       const { container } = render(<Home />);
-      
+
       // Cerca il div con relative z-30 -mt-32 che contiene PROCESS
       const processWrapper = container.querySelector('.relative.z-30.-mt-32');
       expect(processWrapper).toBeInTheDocument();
@@ -167,7 +174,7 @@ describe('Home Page', () => {
 
     it('applies correct background styling', () => {
       const { container } = render(<Home />);
-      
+
       const bgContainer = container.querySelector('.bg-black');
       expect(bgContainer).toBeInTheDocument();
     });
@@ -183,14 +190,14 @@ describe('Home Page', () => {
 
     it('maintains proper component order', () => {
       const { container } = render(<Home />);
-      
+
       const main = container.querySelector('main');
       const children = Array.from(main?.children || []);
-      
+
       // Verifica che ci sia almeno il container bg-black
       expect(children.length).toBeGreaterThan(0);
-      
-      const bgContainer = children.find(child => 
+
+      const bgContainer = children.find(child =>
         child.classList.contains('bg-black')
       );
       expect(bgContainer).toBeDefined();

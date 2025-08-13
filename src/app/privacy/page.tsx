@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function PrivacyPolicy() {
@@ -40,9 +41,9 @@ export default function PrivacyPolicy() {
                   Contact Information
                 </h3>
                 <p>
-                  When you contact me through this website's contact forms or
-                  email (omarpioselli.dev@gmail.com), I collect information you
-                  voluntarily provide, including:
+                  When you contact me through this website&apos;s contact forms
+                  or email (omarpioselli.dev@gmail.com), I collect information
+                  you voluntarily provide, including:
                 </p>
                 <ul className="list-disc list-inside ml-4 space-y-2">
                   <li>Your name and email address</li>
@@ -265,9 +266,9 @@ export default function PrivacyPolicy() {
                   <p>Location: Lambrugo (CO), Italia</p>
                   <p>
                     Website:{' '}
-                    <a href="/" className="text-red-400 hover:text-red-300">
+                    <Link href="/" className="text-red-400 hover:text-red-300">
                       omarpioselli.dev
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function TermsOfService() {
@@ -39,8 +40,8 @@ export default function TermsOfService() {
                 <p>
                   By accessing and using this website (omarpioselli.dev), you
                   accept and agree to be bound by the terms and provision of
-                  this agreement. These Terms of Service ("Terms") govern your
-                  use of this website operated by Omar Pioselli.
+                  this agreement. These Terms of Service (&quot;Terms&quot;)
+                  govern your use of this website operated by Omar Pioselli.
                 </p>
                 <p>
                   If you do not agree to abide by the above, please do not use
@@ -96,8 +97,8 @@ export default function TermsOfService() {
                     employees, or other users
                   </li>
                   <li>
-                    Engage in any conduct that restricts or inhibits anyone's
-                    use of the website
+                    Engage in any conduct that restricts or inhibits
+                    anyone&apos;s use of the website
                   </li>
                   <li>
                     Use any robot, spider, or other automatic device to access
@@ -232,10 +233,10 @@ export default function TermsOfService() {
                   Website Disclaimer
                 </h3>
                 <p>
-                  This website is provided "as is" without any representations
-                  or warranties, express or implied. I make no representations
-                  or warranties in relation to this website or the information
-                  and materials provided.
+                  This website is provided &quot;as is&quot; without any
+                  representations or warranties, express or implied. I make no
+                  representations or warranties in relation to this website or
+                  the information and materials provided.
                 </p>
 
                 <h3 className="text-xl font-medium text-white mt-6">
@@ -277,10 +278,10 @@ export default function TermsOfService() {
               <div className="text-gray-300 space-y-4">
                 <p>
                   You agree to indemnify and hold harmless Omar Pioselli from
-                  any claim or demand, including reasonable attorneys' fees,
-                  made by any third party due to or arising out of your breach
-                  of these Terms, your violation of any law, or your violation
-                  of the rights of a third party.
+                  any claim or demand, including reasonable attorneys&apos;
+                  fees, made by any third party due to or arising out of your
+                  breach of these Terms, your violation of any law, or your
+                  violation of the rights of a third party.
                 </p>
               </div>
             </section>
@@ -360,9 +361,9 @@ export default function TermsOfService() {
                   <p>Location: Lambrugo (CO), Italia</p>
                   <p>
                     Website:{' '}
-                    <a href="/" className="text-red-400 hover:text-red-300">
+                    <Link href="/" className="text-red-400 hover:text-red-300">
                       omarpioselli.dev
-                    </a>
+                    </Link>
                   </p>
                   <p>
                     LinkedIn:{' '}

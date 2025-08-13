@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function CookiePolicy() {
@@ -43,11 +44,11 @@ export default function CookiePolicy() {
                   information to the site owners.
                 </p>
                 <p>
-                  This Cookie Policy explains how Omar Pioselli ("I", "me", or
-                  "my") uses cookies and similar technologies on this website
-                  (omarpioselli.dev) to recognize you when you visit. It
-                  explains what these technologies are, why I use them, and your
-                  rights to control their use.
+                  This Cookie Policy explains how Omar Pioselli (&quot;I&quot;,
+                  &quot;me&quot;, or &quot;my&quot;) uses cookies and similar
+                  technologies on this website (omarpioselli.dev) to recognize
+                  you when you visit. It explains what these technologies are,
+                  why I use them, and your rights to control their use.
                 </p>
               </div>
             </section>
@@ -225,7 +226,7 @@ export default function CookiePolicy() {
                           theme-preference
                         </td>
                         <td className="border border-gray-700 px-4 py-3">
-                          Remember user's theme choice
+                          Remember user&apos;s theme choice
                         </td>
                         <td className="border border-gray-700 px-4 py-3">
                           1 year
@@ -434,9 +435,9 @@ export default function CookiePolicy() {
                   <p>Location: Lambrugo (CO), Italia</p>
                   <p>
                     Website:{' '}
-                    <a href="/" className="text-red-400 hover:text-red-300">
+                    <Link href="/" className="text-red-400 hover:text-red-300">
                       omarpioselli.dev
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>

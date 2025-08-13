@@ -19,14 +19,22 @@ jest.mock('@/components/sections/navbar', () => {
 });
 
 jest.mock('@/components/navigation-provider', () => {
-  return function MockNavigationProvider({ children }: { children: React.ReactNode }) {
+  return function MockNavigationProvider({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) {
     return <div data-testid="navigation-provider">{children}</div>;
   };
 });
 
 describe('RootLayout', () => {
   // Mock per creare un componente testabile che rappresenta solo il contenuto del body
-  const TestableRootLayoutBody = ({ children }: { children: React.ReactNode }) => {
+  const TestableRootLayoutBody = ({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) => {
     return (
       <div className="--font-geist-sans --font-geist-mono antialiased bg-black">
         <div data-testid="navigation-provider">
@@ -76,7 +84,12 @@ describe('RootLayout', () => {
       );
 
       const rootDiv = container.firstChild as HTMLElement;
-      expect(rootDiv).toHaveClass('--font-geist-sans', '--font-geist-mono', 'antialiased', 'bg-black');
+      expect(rootDiv).toHaveClass(
+        '--font-geist-sans',
+        '--font-geist-mono',
+        'antialiased',
+        'bg-black'
+      );
     });
   });
 
@@ -84,7 +97,9 @@ describe('RootLayout', () => {
     it('exports correct metadata object', () => {
       expect(metadata).toBeDefined();
       expect(metadata.title).toBe('Omar Pioselli - Full Stack Developer');
-      expect(metadata.description).toContain('Professional Full Stack Developer');
+      expect(metadata.description).toContain(
+        'Professional Full Stack Developer'
+      );
     });
 
     it('contains correct metadata fields', () => {
@@ -98,8 +113,10 @@ describe('RootLayout', () => {
         'Web Development',
         'Italy',
       ]);
-      
-      expect(metadata.authors).toEqual([{ name: 'Omar Pioselli', url: 'https://omarpioselli.dev' }]);
+
+      expect(metadata.authors).toEqual([
+        { name: 'Omar Pioselli', url: 'https://omarpioselli.dev' },
+      ]);
       expect(metadata.creator).toBe('Omar Pioselli');
     });
 
@@ -109,7 +126,8 @@ describe('RootLayout', () => {
         locale: 'en_US',
         url: 'https://omarpioselli.dev',
         title: 'Omar Pioselli - Full Stack Developer',
-        description: 'Professional Full Stack Developer specializing in modern web applications with React, Next.js, Node.js, and cutting-edge technologies.',
+        description:
+          'Professional Full Stack Developer specializing in modern web applications with React, Next.js, Node.js, and cutting-edge technologies.',
         siteName: 'Omar Pioselli Portfolio',
       });
     });
@@ -118,7 +136,8 @@ describe('RootLayout', () => {
       expect(metadata.twitter).toEqual({
         card: 'summary_large_image',
         title: 'Omar Pioselli - Full Stack Developer',
-        description: 'Professional Full Stack Developer specializing in modern web applications with React, Next.js, Node.js, and cutting-edge technologies.',
+        description:
+          'Professional Full Stack Developer specializing in modern web applications with React, Next.js, Node.js, and cutting-edge technologies.',
       });
     });
 
@@ -146,7 +165,7 @@ describe('RootLayout', () => {
     it('component function handles children prop correctly', () => {
       // Test che la funzione accetta e gestisce il parametro children
       const mockProps = { children: 'test-children' };
-      
+
       // Questo test verifica che la funzione non lanci errori con props valide
       expect(() => {
         const result = RootLayout(mockProps);
