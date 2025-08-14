@@ -879,3 +879,88 @@ body {
   transition-timing-function: ease-out;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+
+/* ==========================================================================
+   5. Performance Optimizations & Accessibility
+   ========================================================================== */
+
+/* Performance: Accessibility - Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable specific animations */
+  .neon-pulse-animation,
+  .neon-bounce-animation,
+  .TinyBarLoader,
+  .GlassMarqueeContainer,
+  .animated-gradient-border-button,
+  .animate-skeletonLoader,
+  .skeletonBarsLoaders,
+  .animate-shimmer,
+  [class*="AnimatedCartBtn"] {
+    animation: none !important;
+  }
+
+  /* Disable backdrop filters for performance */
+  .GlassMarqueeEffect,
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+  }
+}
+
+/* Performance: Hardware acceleration for transform animations */
+.InteractiveGalleryCard,
+.GlassMarqueeCard,
+.card-hover,
+.dynamicNav-nav-link,
+.toggle-switch .toggle-knob {
+  will-change: transform;
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+/* Performance: Remove will-change after animations complete */
+.InteractiveGalleryCard:not(:hover),
+.GlassMarqueeCard:not(:hover),
+.card-hover:not(:hover),
+.dynamicNav-nav-link:not(:hover) {
+  will-change: auto;
+}
+
+/* Performance: Optimize infinite animations with animation-play-state controls */
+.performance-pause-animations .GlassMarqueeContainer,
+.performance-pause-animations .animated-gradient-border-button,
+.performance-pause-animations .TinyBarLoader,
+.performance-pause-animations .animate-skeletonLoader,
+.performance-pause-animations .skeletonBarsLoaders,
+.performance-pause-animations .animate-shimmer {
+  animation-play-state: paused;
+}
+
+/* Performance: Optimize backdrop-filter usage */
+.backdrop-blur-optimized {
+  will-change: backdrop-filter;
+}
+
+.backdrop-blur-optimized:not(:hover):not(:focus) {
+  will-change: auto;
+}
+
+/* Performance: Use transform3d for better hardware acceleration */
+.GlassMarqueeCard:hover {
+  transform: translate3d(0, -10px, 0) scale3d(1.05, 1.05, 1);
+}
+
+.card-hover:hover {
+  transform: scale3d(1.02, 1.02, 1);
+}
+
+.dynamicNav-nav-link:hover {
+  transform: scale3d(1.1, 1.1, 1);
+}

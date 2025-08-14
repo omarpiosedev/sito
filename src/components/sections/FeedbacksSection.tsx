@@ -230,6 +230,7 @@ export default function FeedbacksSection() {
             noiseAmount={0.0}
             distortion={0.0}
             className="blur-sm"
+            priority={10}
           />
           {/* Fade overlay per sfumare la luce con il background */}
           <div

@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import CardSwap, {
-  Card,
-} from '@/components/reactbits/Components/CardSwap/CardSwap';
+import DynamicCardSwap, { Card } from '@/components/ui/dynamic-card-swap';
+import OptimizedVideo from '@/components/ui/optimized-video';
 
 export default function Capabilities() {
   const [isVisible, setIsVisible] = useState(false);
@@ -152,7 +151,7 @@ export default function Capabilities() {
             }}
           >
             <div className="relative w-full h-full flex justify-center items-center">
-              <CardSwap
+              <DynamicCardSwap
                 width={350}
                 height={450}
                 cardDistance={60} // Desktop: offset laterale
@@ -172,72 +171,60 @@ export default function Capabilities() {
                   >
                     {/* Wrapper per video positioning */}
                     <div className="relative w-full h-full">
-                      {/* Video Background for Strategy Card */}
+                      {/* Optimized Video Background for Strategy Card */}
                       {capability.title === 'STRATEGY' && (
-                        <video
+                        <OptimizedVideo
+                          src="/mystical-orb-video.mp4"
                           autoPlay
                           muted
                           loop
-                          playsInline
+                          priority={false} // Lazy loading per background videos
+                          preloadStrategy="metadata"
                           className="absolute inset-0 w-full h-full object-cover z-0"
                           aria-label="Strategy background animation video"
-                        >
-                          <source
-                            src="/mystical-orb-video.mp4"
-                            type="video/mp4"
-                          />
-                        </video>
+                        />
                       )}
 
-                      {/* Video Background for Design Card */}
+                      {/* Optimized Video Background for Design Card */}
                       {capability.title === 'DESIGN' && (
-                        <video
+                        <OptimizedVideo
+                          src="/reaching-light-video.mp4"
                           autoPlay
                           muted
                           loop
-                          playsInline
+                          priority={false} // Lazy loading per background videos
+                          preloadStrategy="metadata"
                           className="absolute inset-0 w-full h-full object-cover z-0"
                           aria-label="Design background animation video"
-                        >
-                          <source
-                            src="/reaching-light-video.mp4"
-                            type="video/mp4"
-                          />
-                        </video>
+                        />
                       )}
 
-                      {/* Video Background for Development Card */}
+                      {/* Optimized Video Background for Development Card */}
                       {capability.title === 'DEVELOPMENT' && (
-                        <video
+                        <OptimizedVideo
+                          src="/mystical-red-tree-video.mp4"
                           autoPlay
                           muted
                           loop
-                          playsInline
+                          priority={false} // Lazy loading per background videos
+                          preloadStrategy="metadata"
                           className="absolute inset-0 w-full h-full object-cover z-0"
                           aria-label="Development background animation video"
-                        >
-                          <source
-                            src="/mystical-red-tree-video.mp4"
-                            type="video/mp4"
-                          />
-                        </video>
+                        />
                       )}
 
-                      {/* Video Background for Production Card */}
+                      {/* Optimized Video Background for Production Card */}
                       {capability.title === 'PRODUCTION' && (
-                        <video
+                        <OptimizedVideo
+                          src="/red-lit-introspection-video.mp4"
                           autoPlay
                           muted
                           loop
-                          playsInline
+                          priority={false} // Lazy loading per background videos
+                          preloadStrategy="metadata"
                           className="absolute inset-0 w-full h-full object-cover z-0"
                           aria-label="Production background animation video"
-                        >
-                          <source
-                            src="/red-lit-introspection-video.mp4"
-                            type="video/mp4"
-                          />
-                        </video>
+                        />
                       )}
 
                       {/* Content */}
@@ -273,7 +260,7 @@ export default function Capabilities() {
                     </div>
                   </Card>
                 ))}
-              </CardSwap>
+              </DynamicCardSwap>
             </div>
           </div>
         </div>

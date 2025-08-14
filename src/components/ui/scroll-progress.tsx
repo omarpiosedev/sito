@@ -1,38 +1,30 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
+import { useOptimizedScroll } from '@/lib/use-scroll';
+import {
+  fadeVariants,
+  progressVariants,
+  transitions,
+} from '@/lib/animation-variants';
 
 export default function ScrollProgress() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    const updateScrollProgress = () => {
-      const scrollTop = window.pageYOffset;
-      const docHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (scrollTop / docHeight) * 100;
-      setScrollProgress(progress);
-    };
-
-    window.addEventListener('scroll', updateScrollProgress);
-    updateScrollProgress();
-
-    return () => window.removeEventListener('scroll', updateScrollProgress);
-  }, []);
+  const { scrollProgress, prefersReducedMotion } = useOptimizedScroll();
 
   return (
     <motion.div
       className="fixed top-0 left-0 right-0 h-1 bg-black/20 z-[999] pointer-events-none"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: scrollProgress > 1 ? 1 : 0 }}
-      transition={{ duration: 0.3 }}
+      variants={fadeVariants}
+      initial="hidden"
+      animate={scrollProgress > 1 ? 'visible' : 'hidden'}
+      transition={prefersReducedMotion ? { duration: 0 } : transitions.medium}
     >
       <motion.div
         className="h-full bg-gradient-to-r from-red-400 to-red-600 origin-left"
-        initial={{ scaleX: 0 }}
         style={{ scaleX: scrollProgress / 100 }}
-        transition={{ duration: 0.1, ease: 'easeOut' }}
+        variants={progressVariants}
+        transition={prefersReducedMotion ? { duration: 0 } : transitions.fast}
       />
     </motion.div>
   );

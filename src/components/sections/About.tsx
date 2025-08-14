@@ -204,6 +204,7 @@ const About = () => {
           className="absolute inset-0 z-0"
           color="#ff0000"
           backdropBlurAmount="none"
+          priority={9}
         />
         {/* Fade overlay per bordi top e bottom */}
         <div className="absolute inset-0 z-5 pointer-events-none">

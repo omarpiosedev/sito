@@ -159,7 +159,11 @@ describe('Timeline', () => {
       // Check for paragraph element directly in the DOM since GSAP modifies text content
       const description = container.querySelector('p');
       expect(description).toBeInTheDocument();
-      expect(description).toHaveClass('text-white/90', 'text-sm', 'md:text-base');
+      expect(description).toHaveClass(
+        'text-white/90',
+        'text-sm',
+        'md:text-base'
+      );
     });
 
     it('renders all timeline items', () => {

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ScrollVelocity from '@/components/reactbits/TextAnimations/ScrollVelocity/ScrollVelocity';
+import DynamicScrollVelocity from '@/components/ui/dynamic-scroll-velocity';
 
 interface SectionDividerProps {
   /** Il testo da mostrare nel divisore */
@@ -45,7 +45,7 @@ export default function SectionDivider({
       className={`${height} ${backgroundColor} relative overflow-hidden flex items-center justify-center -mt-1 md:mt-32 lg:mt-48 ${containerClassName}`}
     >
       <div className="absolute inset-0 flex items-center justify-center">
-        <ScrollVelocity
+        <DynamicScrollVelocity
           texts={[text]}
           velocity={baseVelocity}
           className={finalTextClass}

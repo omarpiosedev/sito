@@ -4,9 +4,10 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import HackerBackground from '../eldoraui/hackerbg';
+import { DynamicHackerBackground } from '@/components/ui/dynamic-backgrounds';
 import { MultiDirectionSlide } from '../eldoraui/multidirectionalslide';
 import ScrollIndicator from '../ui/scroll-indicator';
+import OptimizedVideo from '@/components/ui/optimized-video';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -88,12 +89,13 @@ export default function Contact() {
       role="region"
     >
       {animationStarted && (
-        <HackerBackground
+        <DynamicHackerBackground
           color="#F00"
           fontSize={12}
           speed={0.8}
           reset={resetAnimation}
           className="absolute inset-0 z-0"
+          priority={5}
         />
       )}
 
@@ -285,22 +287,18 @@ export default function Contact() {
                 data-testid="video-container"
                 className="w-full max-w-md backdrop-blur-sm bg-black/20 border border-white/5 rounded-3xl relative group hover:border-white/10 transition-all duration-500 min-h-[520px] lg:min-h-[600px] overflow-hidden"
               >
-                {/* Video */}
-                <video
+                {/* Optimized Video */}
+                <OptimizedVideo
+                  src="/kling_video.mp4"
                   autoPlay
                   loop
                   muted
-                  playsInline
+                  priority={false} // Non above-the-fold, usa lazy loading
+                  preloadStrategy="metadata"
                   role="application"
                   className="absolute inset-0 w-full h-full object-cover"
-                >
-                  <source
-                    data-testid="video-source"
-                    src="/kling_video.mp4"
-                    type="video/mp4"
-                  />
-                  Your browser does not support the video tag.
-                </video>
+                  data-testid="video-source"
+                />
               </motion.div>
             </motion.div>
           </div>

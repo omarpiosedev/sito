@@ -3,6 +3,18 @@ let navigationCallbacks: Array<
   (isNavigating: boolean, targetSection?: string) => void
 > = [];
 
+// Performance: Debounce utility function
+function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
+
 export function onNavigationStateChange(
   callback: (isNavigating: boolean, targetSection?: string) => void
 ) {
@@ -72,7 +84,9 @@ export function handleMenuClick(section: string) {
 function smoothScrollTo(targetY: number, callback?: () => void) {
   const startY = window.pageYOffset;
   const distance = targetY - startY;
-  const duration = Math.max(800, Math.min(1500, Math.abs(distance) / 2)); // Dynamic duration based on distance
+
+  // Performance: Optimized duration calculation with reasonable bounds
+  const duration = Math.max(600, Math.min(1200, Math.abs(distance) / 3));
 
   let start: number;
 
@@ -136,3 +150,6 @@ export function getCurrentSection(): string | null {
 
   return 'home'; // Default to home if no section is active
 }
+
+// Performance: Debounced version of getCurrentSection for scroll events
+export const getCurrentSectionDebounced = debounce(getCurrentSection, 100);

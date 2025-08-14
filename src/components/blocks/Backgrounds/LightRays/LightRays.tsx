@@ -2,8 +2,9 @@
 	Installed from https://reactbits.dev/ts/tailwind/
 */
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
+import { useBackgroundPerformance } from '@/lib/background-performance-manager';
 
 export type RaysOrigin =
   | 'top-center'
@@ -29,6 +30,7 @@ interface LightRaysProps {
   noiseAmount?: number;
   distortion?: number;
   className?: string;
+  priority?: number;
 }
 
 const DEFAULT_COLOR = '#ffffff';
@@ -84,6 +86,7 @@ const LightRays: React.FC<LightRaysProps> = ({
   noiseAmount = 0.0,
   distortion = 0.0,
   className = '',
+  priority = 8,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const uniformsRef = useRef<{
@@ -95,32 +98,66 @@ const LightRays: React.FC<LightRaysProps> = ({
   const animationIdRef = useRef<number | null>(null);
   const meshRef = useRef<Mesh | null>(null);
   const cleanupFunctionRef = useRef<(() => void) | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const lastFrameTimeRef = useRef(0);
+  const renderStartRef = useRef(0);
+  const [isTabActive, setIsTabActive] = useState(true);
+
+  // Generate unique ID for this instance
+  const instanceId = useMemo(
+    () => `light-rays-${Math.random().toString(36).substr(2, 9)}`,
+    []
+  );
+
+  // Use performance manager
+  const {
+    register,
+    unregister,
+    isActive,
+    optimalFrameRate,
+    optimalQuality,
+    shouldReduceMotion,
+    createVisibilityObserver,
+    updateRenderTime,
+  } = useBackgroundPerformance(instanceId, 'webgl', priority);
+
+  // Force activation when component mounts to bypass performance manager issues
+  const [forceActive, setForceActive] = useState(false);
+
+  // Force activation after component mounts to ensure visibility
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setForceActive(true);
+    }, 100); // Small delay to allow performance manager initialization
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Tab visibility detection
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsTabActive(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () =>
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    observerRef.current = new IntersectionObserver(
-      entries => {
-        const entry = entries[0];
-        setIsVisible(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current.observe(containerRef.current);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-        observerRef.current = null;
-      }
-    };
-  }, []);
+    const observer = createVisibilityObserver();
+    if (observer) {
+      observer.observe(containerRef.current);
+      return () => observer.disconnect();
+    } else {
+      // Fallback: force activation if performance manager not available
+      setForceActive(true);
+    }
+  }, [createVisibilityObserver]);
 
   useEffect(() => {
-    if (!isVisible || !containerRef.current) return;
+    if (!containerRef.current) return;
 
     if (cleanupFunctionRef.current) {
       cleanupFunctionRef.current();
@@ -134,9 +171,12 @@ const LightRays: React.FC<LightRaysProps> = ({
 
       if (!containerRef.current) return;
 
+      const quality = optimalQuality();
       const renderer = new Renderer({
-        dpr: Math.min(window.devicePixelRatio, 2),
+        dpr: Math.min(window.devicePixelRatio * quality, 2),
         alpha: true,
+        antialias: quality > 0.7,
+        powerPreference: quality > 0.8 ? 'high-performance' : 'default',
       });
       rendererRef.current = renderer;
 
@@ -284,7 +324,8 @@ void main() {
       const updatePlacement = () => {
         if (!containerRef.current || !renderer) return;
 
-        renderer.dpr = Math.min(window.devicePixelRatio, 2);
+        const quality = optimalQuality();
+        renderer.dpr = Math.min(window.devicePixelRatio * quality, 2);
 
         const { clientWidth: wCSS, clientHeight: hCSS } = containerRef.current;
         renderer.setSize(wCSS, hCSS);
@@ -301,14 +342,51 @@ void main() {
       };
 
       const loop = (t: number) => {
+        // Performance tracking
+        renderStartRef.current = performance.now();
+
         if (!rendererRef.current || !uniformsRef.current || !meshRef.current) {
           return;
         }
 
-        uniforms.iTime.value = t * 0.001;
+        // Check if should render based on performance manager or forced activation
+        const shouldRender = isActive() || forceActive;
+        const blockingFactors = {
+          isActive: isActive(),
+          forceActive,
+          shouldRender,
+          isTabActive,
+          shouldReduceMotion: shouldReduceMotion(),
+        };
+
+        if (!shouldRender || !isTabActive || shouldReduceMotion()) {
+          // Debug first few times
+          if (Math.random() < 0.001) {
+            // Log occasionally to avoid spam
+            console.log('LightRays render blocked:', blockingFactors);
+          }
+          animationIdRef.current = requestAnimationFrame(loop);
+          return;
+        }
+
+        // Dynamic frame rate based on performance
+        const targetInterval = 1000 / optimalFrameRate();
+        const deltaTime = t - lastFrameTimeRef.current;
+
+        if (deltaTime < targetInterval) {
+          animationIdRef.current = requestAnimationFrame(loop);
+          return;
+        }
+
+        lastFrameTimeRef.current = t;
+
+        const quality = optimalQuality();
+
+        // Adaptive quality rendering
+        uniforms.iTime.value = t * 0.001 * quality; // Slow down animation on low quality
 
         if (followMouse && mouseInfluence > 0.0) {
-          const smoothing = 0.92;
+          const smoothing = Math.max(0.85, 0.92 * quality); // Less smoothing on low quality
 
           smoothMouseRef.current.x =
             smoothMouseRef.current.x * smoothing +
@@ -323,8 +401,18 @@ void main() {
           ];
         }
 
+        // Adaptive quality settings
+        uniforms.lightSpread.value = lightSpread * quality;
+        uniforms.noiseAmount.value = noiseAmount * quality;
+        uniforms.distortion.value = distortion * quality;
+
         try {
           renderer.render({ scene: mesh });
+
+          // Update performance metrics
+          const renderTime = performance.now() - renderStartRef.current;
+          updateRenderTime(renderTime);
+
           animationIdRef.current = requestAnimationFrame(loop);
         } catch (error) {
           console.warn('WebGL rendering error:', error);
@@ -334,9 +422,17 @@ void main() {
 
       window.addEventListener('resize', updatePlacement);
       updatePlacement();
-      animationIdRef.current = requestAnimationFrame(loop);
 
-      cleanupFunctionRef.current = () => {
+      // Debug logging
+      console.log('LightRays WebGL initialized:', {
+        instanceId,
+        forceActive,
+        isActiveFunc: isActive(),
+        container: !!containerRef.current,
+      });
+
+      // Register with performance manager
+      register(() => {
         if (animationIdRef.current) {
           cancelAnimationFrame(animationIdRef.current);
           animationIdRef.current = null;
@@ -364,19 +460,17 @@ void main() {
         rendererRef.current = null;
         uniformsRef.current = null;
         meshRef.current = null;
-      };
+      });
+
+      animationIdRef.current = requestAnimationFrame(loop);
     };
 
     initializeWebGL();
 
     return () => {
-      if (cleanupFunctionRef.current) {
-        cleanupFunctionRef.current();
-        cleanupFunctionRef.current = null;
-      }
+      unregister();
     };
   }, [
-    isVisible,
     raysOrigin,
     raysColor,
     raysSpeed,
@@ -389,6 +483,16 @@ void main() {
     mouseInfluence,
     noiseAmount,
     distortion,
+    isActive,
+    isTabActive,
+    optimalFrameRate,
+    optimalQuality,
+    shouldReduceMotion,
+    register,
+    unregister,
+    updateRenderTime,
+    forceActive,
+    instanceId,
   ]);
 
   useEffect(() => {

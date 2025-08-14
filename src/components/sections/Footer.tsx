@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/optimized-image';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -168,11 +168,14 @@ export default function Footer() {
                   aria-label="Freelancer Profile"
                   className="w-8 h-8 bg-white rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-200 p-1"
                 >
-                  <Image
+                  <OptimizedImage
                     src="/freelancer-1.svg"
                     alt="Freelancer"
                     width={32}
                     height={32}
+                    priority={false} // Footer non priority
+                    sizes="32px" // Dimensione fissa piccola
+                    quality={90} // Alta qualità per SVG/logo
                     className="w-full h-full object-contain"
                   />
                 </a>

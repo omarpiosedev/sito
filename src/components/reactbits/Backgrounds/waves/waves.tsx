@@ -3,7 +3,14 @@ or read our installation document. (go to lightswind.com/components/Installation
 npm i lightswind@latest*/
 
 'use client';
-import React, { useEffect, useRef, useState, ReactElement } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  ReactElement,
+  useMemo,
+} from 'react';
+import { useBackgroundPerformance } from '@/lib/background-performance-manager';
 
 const vertexShaderSource = `
   attribute vec4 a_position;
@@ -67,6 +74,7 @@ interface ShaderBackgroundProps {
   backdropBlurAmount?: string; // Accept any string from UI (validated internally)
   color?: string;
   className?: string;
+  priority?: number;
 }
 
 /**
@@ -95,10 +103,38 @@ function ShaderBackground({
   backdropBlurAmount = 'sm',
   color = '#07eae6ff', // Default purple color
   className = '',
+  priority = 7,
 }: ShaderBackgroundProps): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  // Visibility state managed by performance manager
+  // const [isVisible, setIsVisible] = useState(false);
+  const [isTabActive, setIsTabActive] = useState(true);
+
+  const animationRef = useRef<number | null>(null);
+  const lastFrameTimeRef = useRef(0);
+  const lastSizeRef = useRef({ width: 0, height: 0 });
+  const mouseDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const renderStartRef = useRef(0);
+
+  // Generate unique ID for this instance
+  const instanceId = useMemo(
+    () => `waves-bg-${Math.random().toString(36).substr(2, 9)}`,
+    []
+  );
+
+  // Use performance manager
+  const {
+    register,
+    unregister,
+    isActive,
+    optimalFrameRate,
+    optimalQuality,
+    shouldReduceMotion,
+    createVisibilityObserver,
+    updateRenderTime,
+  } = useBackgroundPerformance(instanceId, 'webgl', priority);
 
   // Helper to convert hex color to RGB (0-1 range)
   const hexToRgb = (hex: string): [number, number, number] => {
@@ -107,6 +143,33 @@ function ShaderBackground({
     const b = parseInt(hex.substring(5, 7), 16) / 255;
     return [r, g, b];
   };
+
+  // Visibility detection
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const observer = createVisibilityObserver();
+    if (!observer) return; // Handle SSR case
+
+    observer.observe(canvas);
+
+    return () => observer.disconnect();
+  }, [createVisibilityObserver]);
+
+  // Tab visibility detection
+  useEffect(() => {
+    // Only run in browser environment
+    if (typeof document === 'undefined') return;
+
+    const handleVisibilityChange = () => {
+      setIsTabActive(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () =>
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -177,33 +240,80 @@ function ShaderBackground({
     const [r, g, b] = hexToRgb(color);
     gl.uniform3f(uColorLocation, r, g, b);
 
-    const render = () => {
+    const render = (timestamp: number) => {
+      // Performance tracking
+      renderStartRef.current = performance.now();
+
+      // Check if should render based on performance manager
+      if (!isActive() || !isTabActive || shouldReduceMotion()) {
+        animationRef.current = requestAnimationFrame(render);
+        return;
+      }
+
+      // Dynamic frame rate based on performance
+      const targetInterval = 1000 / optimalFrameRate();
+      const deltaTime = timestamp - lastFrameTimeRef.current;
+
+      if (deltaTime < targetInterval) {
+        animationRef.current = requestAnimationFrame(render);
+        return;
+      }
+
+      lastFrameTimeRef.current = timestamp;
+
+      const quality = optimalQuality();
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
-      canvas.width = width;
-      canvas.height = height;
-      gl.viewport(0, 0, width, height);
+
+      // Only resize if dimensions changed and adapt to quality
+      const dpr = Math.min(window.devicePixelRatio || 1, quality * 2);
+      const scaledWidth = Math.floor(width * dpr);
+      const scaledHeight = Math.floor(height * dpr);
+
+      if (
+        lastSizeRef.current.width !== scaledWidth ||
+        lastSizeRef.current.height !== scaledHeight
+      ) {
+        canvas.width = scaledWidth;
+        canvas.height = scaledHeight;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        lastSizeRef.current = { width: scaledWidth, height: scaledHeight };
+        gl.viewport(0, 0, scaledWidth, scaledHeight);
+      }
 
       const currentTime = (Date.now() - startTime) / 1000;
 
-      gl.uniform2f(iResolutionLocation, width, height);
+      gl.uniform2f(iResolutionLocation, scaledWidth, scaledHeight);
       gl.uniform1f(iTimeLocation, currentTime);
       gl.uniform2f(
         iMouseLocation,
-        isHovering ? mousePosition.x : 0,
-        isHovering ? height - mousePosition.y : 0
+        isHovering ? mousePosition.x * dpr : 0,
+        isHovering ? (height - mousePosition.y) * dpr : 0
       );
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      requestAnimationFrame(render);
+
+      // Update performance metrics
+      const renderTime = performance.now() - renderStartRef.current;
+      updateRenderTime(renderTime);
+
+      animationRef.current = requestAnimationFrame(render);
     };
 
+    // Performance: Debounced mouse move handler
     const handleMouseMove = (event: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      setMousePosition({
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
-      });
+      if (mouseDebounceRef.current) {
+        clearTimeout(mouseDebounceRef.current);
+      }
+
+      mouseDebounceRef.current = setTimeout(() => {
+        const rect = canvas.getBoundingClientRect();
+        setMousePosition({
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+        });
+      }, 16); // ~60fps debouncing
     };
 
     const handleMouseEnter = () => {
@@ -219,14 +329,40 @@ function ShaderBackground({
     canvas.addEventListener('mouseenter', handleMouseEnter);
     canvas.addEventListener('mouseleave', handleMouseLeave);
 
-    render();
-
-    return () => {
+    // Register with performance manager
+    register(() => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+      if (mouseDebounceRef.current) {
+        clearTimeout(mouseDebounceRef.current);
+        mouseDebounceRef.current = null;
+      }
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseenter', handleMouseEnter);
       canvas.removeEventListener('mouseleave', handleMouseLeave);
+    });
+
+    // Start rendering
+    animationRef.current = requestAnimationFrame(render);
+
+    return () => {
+      unregister();
     };
-  }, [isHovering, mousePosition, color]); // Add color to the dependency array
+  }, [
+    isHovering,
+    mousePosition,
+    color,
+    isActive,
+    isTabActive,
+    optimalFrameRate,
+    optimalQuality,
+    shouldReduceMotion,
+    register,
+    unregister,
+    updateRenderTime,
+  ]);
 
   // Get the correct Tailwind CSS class from the map
   const finalBlurClass =

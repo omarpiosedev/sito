@@ -1,6 +1,6 @@
 'use client';
 
-import ScrollVelocity from '@/components/reactbits/TextAnimations/ScrollVelocity/ScrollVelocity';
+import DynamicScrollVelocity from '@/components/ui/dynamic-scroll-velocity';
 
 export default function ScrollingBanner() {
   return (
@@ -10,7 +10,7 @@ export default function ScrollingBanner() {
     >
       {/* Testo scorrevole massimo che riempie tutto lo spazio */}
       <div className="flex items-center justify-center h-full">
-        <ScrollVelocity
+        <DynamicScrollVelocity
           texts={['OMARPIOSELLI']}
           velocity={-50}
           className="text-[6rem] md:text-[12rem] lg:text-[14rem] font-bold text-black tracking-tighter leading-none"

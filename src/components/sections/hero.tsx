@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import ScrollVelocity from '@/components/reactbits/TextAnimations/ScrollVelocity/ScrollVelocity';
+import DynamicScrollVelocity from '@/components/ui/dynamic-scroll-velocity';
 
 export default function Hero() {
   return (
@@ -9,7 +9,7 @@ export default function Hero() {
     >
       {/* Testo scorrevole dietro l'immagine */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <ScrollVelocity
+        <DynamicScrollVelocity
           texts={['OMARPIOSELLI']}
           velocity={-50}
           className="text-8xl md:text-9xl lg:text-[12rem] font-bold text-white/10 tracking-tighter"

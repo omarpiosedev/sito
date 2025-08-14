@@ -5,11 +5,11 @@ console.log('🔧 Test Setup del Sistema di Performance\n');
 // Test delle dipendenze
 const dependencies = [
   '@next/bundle-analyzer',
-  'lighthouse', 
+  'lighthouse',
   'chrome-launcher',
   'node-fetch',
   'cross-env',
-  'web-vitals'
+  'web-vitals',
 ];
 
 console.log('📦 Verifica dipendenze:');
@@ -19,7 +19,10 @@ dependencies.forEach(dep => {
     if (dep === 'cross-env') {
       const { execSync } = require('child_process');
       try {
-        execSync('npm list cross-env', { cwd: path.join(__dirname, '..'), stdio: 'pipe' });
+        execSync('npm list cross-env', {
+          cwd: path.join(__dirname, '..'),
+          stdio: 'pipe',
+        });
         console.log(`   ✅ ${dep}`);
       } catch (e) {
         console.log(`   ❌ ${dep} - MANCANTE`);
@@ -43,7 +46,7 @@ const files = [
   'scripts/performance-audit.js',
   'docs/PERFORMANCE.md',
   'next.config.ts',
-  'turbo.json'
+  'turbo.json',
 ];
 
 files.forEach(file => {

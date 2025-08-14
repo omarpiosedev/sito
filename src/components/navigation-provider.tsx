@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { onNavigationStateChange } from '@/lib/scroll-utils';
 import NavigationIndicator from '@/components/ui/navigation-indicator';
 import ScrollToTop from '@/components/ui/scroll-to-top';
-import ScrollProgress from '@/components/ui/scroll-progress';
 import SectionDots from '@/components/ui/section-dots';
 
 export default function NavigationProvider({
@@ -26,7 +25,6 @@ export default function NavigationProvider({
 
   return (
     <>
-      <ScrollProgress />
       {children}
       <NavigationIndicator
         isVisible={isNavigating}

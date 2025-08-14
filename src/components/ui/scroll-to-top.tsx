@@ -1,39 +1,37 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp } from 'lucide-react';
 import { handleMenuClick } from '@/lib/scroll-utils';
+import { useOptimizedScroll } from '@/lib/use-scroll';
+import { scaleVariants, transitions } from '@/lib/animation-variants';
 
 export default function ScrollToTop() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
+  const { isScrollVisible, prefersReducedMotion } = useOptimizedScroll({
+    visibilityThreshold: 300,
+  });
 
   const scrollToTop = () => {
     handleMenuClick('HOME');
   };
 
+  // Performance: Create optimized animation props
+  const animationProps = {
+    variants: scaleVariants,
+    initial: 'hidden',
+    animate: 'visible',
+    exit: 'exit',
+    whileHover: prefersReducedMotion ? {} : 'hover',
+    whileTap: prefersReducedMotion ? {} : 'tap',
+    transition: prefersReducedMotion ? { duration: 0 } : transitions.medium,
+  };
+
   return (
     <AnimatePresence>
-      {isVisible && (
+      {isScrollVisible && (
         <motion.button
-          initial={{ opacity: 0, scale: 0.8, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.8, y: 20 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+          {...animationProps}
           onClick={scrollToTop}
           className="fixed bottom-8 right-8 z-50 p-4 bg-red-500 text-white rounded-full shadow-2xl hover:bg-red-600 transition-colors duration-300"
           style={{

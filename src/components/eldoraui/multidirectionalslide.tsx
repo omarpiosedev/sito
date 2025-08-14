@@ -1,6 +1,8 @@
 'use client';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
+import { slideVariants, transitions } from '@/lib/animation-variants';
+import { usePrefersReducedMotion } from '@/lib/use-scroll';
 
 interface MultiDirectionSlideProps {
   textLeft?: string;
@@ -17,19 +19,18 @@ export const MultiDirectionSlide: React.FC<MultiDirectionSlideProps> = ({
   style = {},
   animate = false,
 }) => {
-  const MULTIDIRECTION_SLIDE_VARIANTS = {
-    hidden: { opacity: 0, x: '-100vw' },
-    visible: { opacity: 1, x: 0 },
-    right: { opacity: 0, x: '100vw' },
-  };
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  // Performance: Use optimized transition duration
+  const transition = prefersReducedMotion ? { duration: 0 } : transitions.slow;
 
   return (
     <div className={clsx('overflow-hidden', className)}>
       <motion.h1
-        initial="hidden"
-        animate={animate ? 'visible' : 'hidden'}
-        variants={MULTIDIRECTION_SLIDE_VARIANTS}
-        transition={{ duration: 1 }}
+        initial="hiddenLeft"
+        animate={animate ? 'visible' : 'hiddenLeft'}
+        variants={slideVariants}
+        transition={transition}
         className={clsx(
           'text-center font-display font-bold drop-shadow-sm',
           className
@@ -40,10 +41,10 @@ export const MultiDirectionSlide: React.FC<MultiDirectionSlideProps> = ({
       </motion.h1>
 
       <motion.h1
-        initial="right"
-        animate={animate ? 'visible' : 'right'}
-        variants={MULTIDIRECTION_SLIDE_VARIANTS}
-        transition={{ duration: 1 }}
+        initial="hiddenRight"
+        animate={animate ? 'visible' : 'hiddenRight'}
+        variants={slideVariants}
+        transition={transition}
         className={clsx(
           'text-center font-display font-bold drop-shadow-sm',
           className

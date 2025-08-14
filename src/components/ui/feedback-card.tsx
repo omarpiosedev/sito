@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import OptimizedImage from './optimized-image';
 import StarRating from './star-rating';
 
 interface FeedbackCardProps {
@@ -47,10 +47,13 @@ export default function FeedbackCard({ quote, author }: FeedbackCardProps) {
           {/* Avatar */}
           <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-700">
             {author.avatar ? (
-              <Image
+              <OptimizedImage
                 src={author.avatar}
                 alt={author.name}
                 fill
+                priority={false} // Avatar non priority
+                sizes="48px" // Dimensione fissa piccola per avatar
+                quality={85} // Buona qualità per foto profilo
                 className="object-cover"
               />
             ) : (

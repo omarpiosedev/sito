@@ -2,7 +2,7 @@
 
 import React, { useRef, memo, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import Image from 'next/image';
+import OptimizedImage from '@/components/ui/optimized-image';
 import SectionDivider from './SectionDivider';
 import { HoverRollingText } from '@/components/ui/hover-rolling-text';
 
@@ -257,11 +257,14 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
             }}
           >
             <div className="w-full h-[300px] md:h-[400px] lg:h-[600px] bg-gradient-to-br from-red-900/20 to-red-500/10 rounded-2xl overflow-hidden shadow-2xl">
-              <Image
+              <OptimizedImage
                 src={project.image}
                 alt={project.title}
                 width={800}
                 height={600}
+                priority={false} // Non above-the-fold
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+                quality={85} // Buona qualità per project images
                 className="w-full h-full object-cover transition-transform duration-700 ease-out hover:scale-110"
               />
 
@@ -446,10 +449,13 @@ function ProjectsGrid() {
                 key={index}
                 className="relative overflow-hidden rounded-lg aspect-square"
               >
-                <Image
+                <OptimizedImage
                   src={gridImages[index]}
                   alt={`Project ${index + 1}`}
                   fill
+                  priority={false} // Grid images non priority
+                  sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
+                  quality={80} // Quality standard per grid
                   className="object-cover"
                 />
               </div>
@@ -470,10 +476,13 @@ function ProjectsGrid() {
                 key={index}
                 className="relative overflow-hidden rounded-lg aspect-square"
               >
-                <Image
+                <OptimizedImage
                   src={gridImages[index]}
                   alt={`Project ${index + 1}`}
                   fill
+                  priority={false} // Grid images non priority
+                  sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
+                  quality={80} // Quality standard per grid
                   className="object-cover"
                 />
               </div>
@@ -493,10 +502,13 @@ function ProjectsGrid() {
                 key={index}
                 className="relative overflow-hidden rounded-lg aspect-square"
               >
-                <Image
+                <OptimizedImage
                   src={gridImages[index]}
                   alt={`Project ${index + 1}`}
                   fill
+                  priority={false} // Grid images non priority
+                  sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
+                  quality={80} // Quality standard per grid
                   className="object-cover"
                 />
               </div>
@@ -542,10 +554,13 @@ function ProjectsGrid() {
               key={index}
               className="relative overflow-hidden rounded-lg aspect-square"
             >
-              <Image
+              <OptimizedImage
                 src={gridImages[index]}
                 alt={`Project ${index + 1}`}
                 fill
+                priority={false}
+                sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
+                quality={80}
                 className="object-cover"
               />
             </div>
@@ -566,10 +581,13 @@ function ProjectsGrid() {
               key={index}
               className="relative overflow-hidden rounded-lg aspect-square"
             >
-              <Image
+              <OptimizedImage
                 src={gridImages[index]}
                 alt={`Project ${index + 1}`}
                 fill
+                priority={false}
+                sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
+                quality={80}
                 className="object-cover"
               />
             </div>
@@ -589,10 +607,13 @@ function ProjectsGrid() {
               key={index}
               className="relative overflow-hidden rounded-lg aspect-square"
             >
-              <Image
+              <OptimizedImage
                 src={gridImages[index]}
                 alt={`Project ${index + 1}`}
                 fill
+                priority={false}
+                sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
+                quality={80}
                 className="object-cover"
               />
             </div>

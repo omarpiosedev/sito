@@ -72,6 +72,12 @@ function ShaderBackground({
   const canvasRef = useRef(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isTabActive, setIsTabActive] = useState(true);
+  const animationRef = useRef(null);
+  const lastFrameTimeRef = useRef(0);
+  const lastSizeRef = useRef({ width: 0, height: 0 });
+  const mouseDebounceRef = useRef(null);
   // Helper to convert hex color to RGB (0-1 range)
   const hexToRgb = hex => {
     const r = parseInt(hex.substring(1, 3), 16) / 255;
@@ -79,6 +85,45 @@ function ShaderBackground({
     const b = parseInt(hex.substring(5, 7), 16) / 255;
     return [r, g, b];
   };
+
+  // Performance: Add IntersectionObserver for visibility detection
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  // Performance: Add Page Visibility API for tab switching
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsTabActive(!document.hidden);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () =>
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  // Performance: Check for prefers-reduced-motion
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -133,14 +178,38 @@ function ShaderBackground({
     // Set the initial color
     const [r, g, b] = hexToRgb(color);
     gl.uniform3f(uColorLocation, r, g, b);
-    const render = () => {
+    const render = timestamp => {
+      // Performance: Only render if visible, tab active, and not reduced motion preferred
+      if (!isVisible || !isTabActive || prefersReducedMotion) {
+        animationRef.current = requestAnimationFrame(render);
+        return;
+      }
+
+      // Performance: Frame rate limiting (60fps max)
+      const deltaTime = timestamp - lastFrameTimeRef.current;
+      if (deltaTime < 16.67) {
+        // ~60fps
+        animationRef.current = requestAnimationFrame(render);
+        return;
+      }
+      lastFrameTimeRef.current = timestamp;
+
+      // Performance: Only resize canvas if dimensions changed
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
-      canvas.width = width;
-      canvas.height = height;
-      gl.viewport(0, 0, width, height);
+
+      if (
+        lastSizeRef.current.width !== width ||
+        lastSizeRef.current.height !== height
+      ) {
+        canvas.width = width;
+        canvas.height = height;
+        lastSizeRef.current = { width, height };
+        gl.viewport(0, 0, width, height);
+        gl.uniform2f(iResolutionLocation, width, height);
+      }
+
       const currentTime = (Date.now() - startTime) / 1000;
-      gl.uniform2f(iResolutionLocation, width, height);
       gl.uniform1f(iTimeLocation, currentTime);
       gl.uniform2f(
         iMouseLocation,
@@ -148,14 +217,21 @@ function ShaderBackground({
         isHovering ? height - mousePosition.y : 0
       );
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      requestAnimationFrame(render);
+      animationRef.current = requestAnimationFrame(render);
     };
+    // Performance: Debounced mouse move handler
     const handleMouseMove = event => {
-      const rect = canvas.getBoundingClientRect();
-      setMousePosition({
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
-      });
+      if (mouseDebounceRef.current) {
+        clearTimeout(mouseDebounceRef.current);
+      }
+
+      mouseDebounceRef.current = setTimeout(() => {
+        const rect = canvas.getBoundingClientRect();
+        setMousePosition({
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+        });
+      }, 16); // ~60fps debouncing
     };
     const handleMouseEnter = () => {
       setIsHovering(true);
@@ -167,13 +243,30 @@ function ShaderBackground({
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseenter', handleMouseEnter);
     canvas.addEventListener('mouseleave', handleMouseLeave);
-    render();
+
+    // Start rendering
+    animationRef.current = requestAnimationFrame(render);
+
     return () => {
+      // Performance: Clean up animation frame and debounce timer
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (mouseDebounceRef.current) {
+        clearTimeout(mouseDebounceRef.current);
+      }
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseenter', handleMouseEnter);
       canvas.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [isHovering, mousePosition, color]); // Add color to the dependency array
+  }, [
+    isHovering,
+    mousePosition,
+    color,
+    isVisible,
+    isTabActive,
+    prefersReducedMotion,
+  ]); // Performance: Add visibility controls to dependencies
   // Get the correct Tailwind CSS class from the map
   const finalBlurClass = blurClassMap[backdropBlurAmount] || blurClassMap['sm'];
   return _jsxs('div', {
