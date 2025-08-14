@@ -20,41 +20,41 @@ const projectsData: Project[] = [
   {
     id: '01',
     number: '01',
-    title: 'BOLDCRAFT',
-    category: 'UI DESIGN • VISUAL BRANDING',
+    title: "LORENZOSAINI'S ART",
+    category: 'PHOTOGRAPHY • VIDEO • GRAPHIC DESIGN',
     description:
-      'A comprehensive design system and branding project focused on creating bold, modern interfaces with exceptional user experiences.',
-    image: '/projects/boldcraft.svg',
+      'Portfolio website showcasing creative photography, videography and graphic design work. A modern digital showcase for artistic expression and professional services.',
+    image: '/projects/work-in-progress.svg',
     link: '#',
   },
   {
     id: '02',
     number: '02',
-    title: 'NEXORA',
-    category: 'BRANDING • UI DESIGN • RESEARCH',
+    title: 'PIZZERIA LARIANA',
+    category: 'RESTAURANT • LOCAL BUSINESS • UI DESIGN',
     description:
-      'Modern web application built with cutting-edge design principles, featuring seamless user interactions and innovative visual storytelling.',
-    image: '/projects/nexora.svg',
+      'Traditional Italian pizzeria website featuring authentic recipes, local charm and online ordering system. Bringing the taste of Italy to the digital world.',
+    image: '/projects/work-in-progress.svg',
     link: '#',
   },
   {
     id: '03',
     number: '03',
-    title: 'CLAR & CO',
-    category: 'BRANDING • LUXE WOMENS WEAR',
+    title: 'IMPRESA CUGINI PIOSELLI',
+    category: 'CONSTRUCTION • CORPORATE • BRANDING',
     description:
-      'Luxury fashion brand identity with sophisticated design approach, creating an elevated brand experience for discerning customers.',
-    image: '/projects/clar-co.svg',
+      'Professional construction company website showcasing expertise in building and renovation projects. Reliable craftsmanship meets modern digital presence.',
+    image: '/projects/work-in-progress.svg',
     link: '#',
   },
   {
     id: '04',
     number: '04',
-    title: 'MODIVO',
-    category: 'PRODUCT DESIGN • BRANDING',
+    title: "GIUSEPPECHILA'S SEX",
+    category: 'E-COMMERCE • ADULT ENTERTAINMENT • UI DESIGN',
     description:
-      'Innovative product design and branding solution with focus on user-centric approach and contemporary aesthetic principles.',
-    image: '/projects/modivo.svg',
+      'Modern e-commerce platform for adult products with sophisticated design, secure shopping experience and discreet customer service.',
+    image: '/projects/giuseppe-chila.jpg',
     link: '#',
   },
 ];
@@ -302,15 +302,15 @@ function ProjectsGrid() {
 
   // Progetti placeholder per la griglia
   const gridImages = [
-    '/projects/boldcraft.svg',
-    '/projects/nexora.svg',
-    '/projects/clar-co.svg',
-    '/projects/modivo.svg',
+    '/projects/work-in-progress.svg',
+    '/projects/work-in-progress.svg',
+    '/projects/work-in-progress.svg',
+    '/projects/giuseppe-chila.jpg',
     '/projects/logo-op-center.png', // Logo OP al centro
-    '/projects/nexora.svg',
-    '/projects/clar-co.svg',
-    '/projects/modivo.svg',
-    '/projects/boldcraft.svg',
+    '/projects/giuseppe-chila.jpg',
+    '/projects/work-in-progress.svg',
+    '/projects/work-in-progress.svg',
+    '/projects/work-in-progress.svg',
   ];
 
   // Hooks per mobile - sempre chiamati (stessi valori del desktop per consistenza)
