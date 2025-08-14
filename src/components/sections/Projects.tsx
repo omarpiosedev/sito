@@ -73,7 +73,7 @@ const Projects = memo(() => {
 
       <section
         id="projects"
-        className="relative w-full bg-black text-white"
+        className="relative w-full bg-black text-white overflow-x-hidden"
         style={{ touchAction: 'auto' }}
       >
         {projectsData.map((project, index) => (
@@ -138,20 +138,16 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
     [0, 1],
     isLoaded && isLargeScreen
       ? isReversed
-        ? [-4, 0]
-        : [4, 0]
+        ? [-2, 0]
+        : [2, 0]
       : [0, 0] // Nessuna rotazione se non caricato o su mobile
-  ); // Rotazione ridotta per evitare problemi
+  ); // Rotazione molto ridotta per evitare problemi
 
   const xRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    isLoaded && isLargeScreen
-      ? isReversed
-        ? [-15, 8]
-        : [15, -8]
-      : [0, 0] // Nessun movimento X su mobile per evitare overflow
-  ); // Movimento X controllato
+    [0, 0] // Nessun movimento X per evitare overflow orizzontale
+  ); // Movimento X rimosso completamente
 
   const yRaw = useTransform(
     scrollYProgress,
@@ -167,12 +163,8 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
   const textXRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    isLoaded && isLargeScreen
-      ? isReversed
-        ? [20, 0]
-        : [-20, 0]
-      : [0, 0] // Nessun movimento testo su mobile
-  ); // Movimento testo controllato
+    [0, 0] // Nessun movimento testo orizzontale
+  ); // Movimento testo rimosso per evitare overflow
 
   const textOpacityRaw = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
@@ -185,7 +177,7 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
   return (
     <div
       ref={ref}
-      className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center px-4 py-4 md:py-6 md:px-8 lg:py-8 lg:px-6 xl:px-8 2xl:px-12"
+      className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center px-4 py-4 md:py-6 md:px-8 lg:py-8 lg:px-6 xl:px-8 2xl:px-12 w-full max-w-full overflow-x-hidden"
     >
       <div className="w-full max-w-full mx-auto">
         <div
@@ -450,7 +442,7 @@ function ProjectsGrid() {
     return (
       <div
         ref={ref}
-        className="w-full h-[60vh] md:h-screen flex items-center justify-center relative"
+        className="w-full h-[60vh] md:h-screen flex items-center justify-center relative overflow-x-hidden"
       >
         <motion.div
           className="flex gap-1 w-full h-full p-4 justify-center items-center"
@@ -556,7 +548,7 @@ function ProjectsGrid() {
   return (
     <div
       ref={ref}
-      className="w-full h-screen flex items-center justify-center relative"
+      className="w-full h-screen flex items-center justify-center relative overflow-x-hidden"
     >
       <motion.div
         className="flex gap-2 w-full h-full lg:p-4"
