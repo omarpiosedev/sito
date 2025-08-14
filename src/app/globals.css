@@ -1,25 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* Disable zoom on iOS Safari */
-* {
-  touch-action: manipulation;
-}
-
-@supports (-webkit-touch-callout: none) {
-  /* iOS Safari specific styles */
-  html {
-    -webkit-text-size-adjust: 100%;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-  }
-  
-  body {
-    -webkit-text-size-adjust: 100%;
-    touch-action: manipulation;
-  }
-}
-
 @font-face {
   font-family: 'Anton';
   src: url('/fonts/Anton-Regular.ttf') format('truetype');
