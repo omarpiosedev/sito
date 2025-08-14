@@ -73,7 +73,8 @@ const Projects = memo(() => {
 
       <section
         id="projects"
-        className="relative w-full bg-black text-white overflow-x-hidden"
+        className="relative w-full bg-black text-white"
+        style={{ touchAction: 'auto' }}
       >
         {projectsData.map((project, index) => (
           <ProjectCard
@@ -184,7 +185,7 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
   return (
     <div
       ref={ref}
-      className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center px-4 py-4 md:py-6 md:px-8 lg:py-8 lg:px-6 xl:px-8 2xl:px-12 overflow-hidden"
+      className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center px-4 py-4 md:py-6 md:px-8 lg:py-8 lg:px-6 xl:px-8 2xl:px-12"
     >
       <div className="w-full max-w-full mx-auto">
         <div
@@ -348,14 +349,14 @@ function ProjectsGrid() {
     scrollYProgress,
     isLargeScreen
       ? [0, 0.15, 0.25, 0.35, 0.45, 0.5, 1] // Desktop timing
-      : [0, 0.3, 0.6, 1], // Mobile timing semplificato
+      : [0, 0.4, 0.8, 1], // Mobile timing più semplice
     isLargeScreen 
-      ? [2.8, 2.2, 1.6, 1.2, 1.05, 1, 1]
-      : [2.2, 1.5, 1.1, 1] // Scale ridotte per mobile
+      ? [2.2, 1.8, 1.4, 1.15, 1.05, 1, 1]
+      : [1.5, 1.2, 1.05, 1] // Scale molto ridotte per mobile
   );
   const mobileScaleSpring = useSpring(mobileScale, {
-    damping: 80,
-    stiffness: 200,
+    damping: 90,
+    stiffness: 150,
   });
 
   // Animazioni aggiuntive per mobile - sempre chiamate (non utilizzate se isLargeScreen)
@@ -435,13 +436,13 @@ function ProjectsGrid() {
 
   const desktopScale = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.35, 0.5, 1],
-    [2.2, 1.8, 1.3, 1, 1]
+    [0, 0.25, 0.5, 1],
+    [1.8, 1.4, 1.1, 1]
   );
   const desktopScaleSpring = useSpring(desktopScale, {
-    damping: 80,
-    stiffness: 250,
-    mass: 0.4,
+    damping: 90,
+    stiffness: 200,
+    mass: 0.5,
   });
 
   if (!isLargeScreen) {
@@ -449,14 +450,15 @@ function ProjectsGrid() {
     return (
       <div
         ref={ref}
-        className="w-full h-[60vh] md:h-screen flex items-center justify-center overflow-hidden relative"
+        className="w-full h-[60vh] md:h-screen flex items-center justify-center relative"
       >
         <motion.div
           className="flex gap-1 w-full h-full p-4 justify-center items-center"
           style={{
-            scale: mobileScaleSpring,
+            scale: isLoaded ? mobileScaleSpring : 1,
             transformStyle: 'preserve-3d',
             willChange: 'transform',
+            touchAction: 'auto',
           }}
         >
           {/* Prima colonna (sinistra) - mobile */}
@@ -554,14 +556,15 @@ function ProjectsGrid() {
   return (
     <div
       ref={ref}
-      className="w-full h-screen flex items-center justify-center overflow-hidden relative"
+      className="w-full h-screen flex items-center justify-center relative"
     >
       <motion.div
         className="flex gap-2 w-full h-full lg:p-4"
         style={{
-          scale: desktopScaleSpring,
+          scale: isLoaded ? desktopScaleSpring : 1,
           transformStyle: 'preserve-3d',
           willChange: 'transform',
+          touchAction: 'auto',
         }}
       >
         {/* Prima colonna (sinistra) */}
