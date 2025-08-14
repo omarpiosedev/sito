@@ -20,41 +20,41 @@ const projectsData: Project[] = [
   {
     id: '01',
     number: '01',
-    title: "LORENZOSAINI'S ART",
-    category: 'PHOTOGRAPHY • VIDEO • GRAPHIC DESIGN',
+    title: 'BOLDCRAFT',
+    category: 'UI DESIGN • VISUAL BRANDING',
     description:
-      'Portfolio website showcasing creative photography, videography and graphic design work. A modern digital showcase for artistic expression and professional services.',
-    image: '/projects/work-in-progress.svg',
+      'A comprehensive design system and branding project focused on creating bold, modern interfaces with exceptional user experiences.',
+    image: '/projects/boldcraft.svg',
     link: '#',
   },
   {
     id: '02',
     number: '02',
-    title: 'PIZZERIA LARIANA',
-    category: 'RESTAURANT • LOCAL BUSINESS • UI DESIGN',
+    title: 'NEXORA',
+    category: 'BRANDING • UI DESIGN • RESEARCH',
     description:
-      'Traditional Italian pizzeria website featuring authentic recipes, local charm and online ordering system. Bringing the taste of Italy to the digital world.',
-    image: '/projects/work-in-progress.svg',
+      'Modern web application built with cutting-edge design principles, featuring seamless user interactions and innovative visual storytelling.',
+    image: '/projects/nexora.svg',
     link: '#',
   },
   {
     id: '03',
     number: '03',
-    title: 'IMPRESA CUGINI PIOSELLI',
-    category: 'CONSTRUCTION • CORPORATE • BRANDING',
+    title: 'CLAR & CO',
+    category: 'BRANDING • LUXE WOMENS WEAR',
     description:
-      'Professional construction company website showcasing expertise in building and renovation projects. Reliable craftsmanship meets modern digital presence.',
-    image: '/projects/work-in-progress.svg',
+      'Luxury fashion brand identity with sophisticated design approach, creating an elevated brand experience for discerning customers.',
+    image: '/projects/clar-co.svg',
     link: '#',
   },
   {
     id: '04',
     number: '04',
-    title: "GIUSEPPECHILA'S SEX",
-    category: 'E-COMMERCE • ADULT ENTERTAINMENT • UI DESIGN',
+    title: 'MODIVO',
+    category: 'PRODUCT DESIGN • BRANDING',
     description:
-      'Modern e-commerce platform for adult products with sophisticated design, secure shopping experience and discreet customer service.',
-    image: '/projects/giuseppe-chila.jpg',
+      'Innovative product design and branding solution with focus on user-centric approach and contemporary aesthetic principles.',
+    image: '/projects/modivo.svg',
     link: '#',
   },
 ];
@@ -73,8 +73,7 @@ const Projects = memo(() => {
 
       <section
         id="projects"
-        className="relative w-full bg-black text-white overflow-x-hidden"
-        style={{ touchAction: 'auto' }}
+        className="relative w-full bg-black text-white overflow-hidden"
       >
         {projectsData.map((project, index) => (
           <ProjectCard
@@ -100,31 +99,17 @@ interface ProjectCardProps {
 
 function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
   const ref = useRef(null);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(true);
 
   useEffect(() => {
     const checkScreenSize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
     };
 
-    // Ritardo per evitare flash delle animazioni
-    const timer = setTimeout(() => {
-      checkScreenSize();
-      setIsLoaded(true);
-    }, 100);
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
 
-    const debouncedResize = () => {
-      clearTimeout(timer);
-      setTimeout(checkScreenSize, 150);
-    };
-
-    window.addEventListener('resize', debouncedResize);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', debouncedResize);
-    };
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -132,39 +117,53 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
     offset: ['start end', 'center center'],
   });
 
-  // Animazioni ottimizzate per mobile senza overflow
+  // Animazioni drammatiche su tutti i device!
   const rotateRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    isLoaded && isLargeScreen
+    isLargeScreen
       ? isReversed
-        ? [-2, 0]
-        : [2, 0]
-      : [0, 0] // Nessuna rotazione se non caricato o su mobile
-  ); // Rotazione molto ridotta per evitare problemi
+        ? [-8, 0]
+        : [8, 0]
+      : isReversed
+        ? [-6, 0]
+        : [6, 0]
+  ); // Rotazione forte anche su mobile
 
   const xRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    [0, 0] // Nessun movimento X per evitare overflow orizzontale
-  ); // Movimento X rimosso completamente
+    isLargeScreen
+      ? isReversed
+        ? [-50, 25]
+        : [50, -25]
+      : isReversed
+        ? [-30, 15]
+        : [30, -15]
+  ); // Movimento X drammatico
 
   const yRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    isLoaded ? (isLargeScreen ? (isReversed ? [-15, 8] : [-15, 8]) : [-5, 2]) : [0, 0]
-  ); // Movimento Y ridotto
+    isLargeScreen ? (isReversed ? [-50, 25] : [-50, 25]) : [-30, 15]
+  ); // Movimento Y drammatico
 
-  const rotate = useSpring(rotateRaw, { damping: 40, stiffness: 80 }); // Spring più stabili
-  const x = useSpring(xRaw, { damping: 40, stiffness: 80 });
-  const y = useSpring(yRaw, { damping: 40, stiffness: 80 });
+  const rotate = useSpring(rotateRaw, { damping: 15, stiffness: 120 }); // Spring più reattivi
+  const x = useSpring(xRaw, { damping: 15, stiffness: 120 });
+  const y = useSpring(yRaw, { damping: 15, stiffness: 120 });
 
-  // Text animations - controllate per mobile
+  // Text animations - drammatiche anche su mobile
   const textXRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    [0, 0] // Nessun movimento testo orizzontale
-  ); // Movimento testo rimosso per evitare overflow
+    isLargeScreen
+      ? isReversed
+        ? [60, 0]
+        : [-60, 0]
+      : isReversed
+        ? [40, 0]
+        : [-40, 0]
+  ); // Movimento testo drammatico
 
   const textOpacityRaw = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
@@ -177,11 +176,12 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
   return (
     <div
       ref={ref}
-      className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center px-4 py-4 md:py-6 md:px-8 lg:py-8 lg:px-6 xl:px-8 2xl:px-12 w-full max-w-full overflow-x-hidden"
+      className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center px-6 py-4 md:py-6 lg:py-8 md:px-16 lg:px-6 xl:px-8 2xl:px-12 overflow-hidden"
+      style={{ contain: 'layout' }} // Contiene gli elementi dentro il container
     >
       <div className="w-full max-w-full mx-auto">
         <div
-          className={`grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-center max-w-full`}
+          className={`grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-center`}
         >
           {/* Text Content */}
           <motion.div
@@ -243,7 +243,7 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
 
           {/* Project Image */}
           <motion.div
-            className={`relative overflow-hidden rounded-2xl lg:col-span-3 mx-auto lg:mx-0 w-full max-w-full min-w-0 ${
+            className={`relative overflow-hidden rounded-2xl lg:col-span-3 mx-auto lg:mx-0 ${
               isReversed
                 ? 'lg:col-start-1 lg:order-1 lg:mr-2 xl:mr-3 2xl:mr-4'
                 : 'lg:col-start-3 lg:order-2 lg:ml-2 xl:ml-3 2xl:ml-4'
@@ -253,10 +253,10 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
               rotate,
               x,
               y,
-              willChange: 'transform',
+              maxWidth: isLargeScreen ? 'none' : '100%',
             }}
           >
-            <div className="w-full h-[300px] md:h-[400px] lg:h-[600px] bg-gradient-to-br from-red-900/20 to-red-500/10 rounded-2xl overflow-hidden shadow-2xl max-w-full min-w-0">
+            <div className="w-full h-[300px] md:h-[400px] lg:h-[600px] bg-gradient-to-br from-red-900/20 to-red-500/10 rounded-2xl overflow-hidden shadow-2xl">
               <OptimizedImage
                 src={project.image}
                 alt={project.title}
@@ -280,31 +280,17 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
 
 function ProjectsGrid() {
   const ref = useRef(null);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(true);
 
   useEffect(() => {
     const checkScreenSize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
     };
 
-    // Ritardo per evitare flash delle animazioni
-    const timer = setTimeout(() => {
-      checkScreenSize();
-      setIsLoaded(true);
-    }, 100);
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
 
-    const debouncedResize = () => {
-      clearTimeout(timer);
-      setTimeout(checkScreenSize, 150);
-    };
-
-    window.addEventListener('resize', debouncedResize);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', debouncedResize);
-    };
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -316,15 +302,15 @@ function ProjectsGrid() {
 
   // Progetti placeholder per la griglia
   const gridImages = [
-    '/projects/work-in-progress.svg',
-    '/projects/work-in-progress.svg',
-    '/projects/work-in-progress.svg',
-    '/projects/giuseppe-chila.jpg',
+    '/projects/boldcraft.svg',
+    '/projects/nexora.svg',
+    '/projects/clar-co.svg',
+    '/projects/modivo.svg',
     '/projects/logo-op-center.png', // Logo OP al centro
-    '/projects/giuseppe-chila.jpg',
-    '/projects/work-in-progress.svg',
-    '/projects/work-in-progress.svg',
-    '/projects/work-in-progress.svg',
+    '/projects/nexora.svg',
+    '/projects/clar-co.svg',
+    '/projects/modivo.svg',
+    '/projects/boldcraft.svg',
   ];
 
   // Hooks per mobile - sempre chiamati (stessi valori del desktop per consistenza)
@@ -341,14 +327,12 @@ function ProjectsGrid() {
     scrollYProgress,
     isLargeScreen
       ? [0, 0.15, 0.25, 0.35, 0.45, 0.5, 1] // Desktop timing
-      : [0, 0.4, 0.8, 1], // Mobile timing più semplice
-    isLargeScreen 
-      ? [2.2, 1.8, 1.4, 1.15, 1.05, 1, 1]
-      : [1.5, 1.2, 1.05, 1] // Scale molto ridotte per mobile
+      : [0, 0.2, 0.4, 0.6, 0.8, 1, 1], // Mobile timing - completa al centro
+    [2.8, 2.2, 1.6, 1.2, 1.05, 1, 1]
   );
   const mobileScaleSpring = useSpring(mobileScale, {
-    damping: 90,
-    stiffness: 150,
+    damping: 70,
+    stiffness: 300,
   });
 
   // Animazioni aggiuntive per mobile - sempre chiamate (non utilizzate se isLargeScreen)
@@ -371,15 +355,15 @@ function ProjectsGrid() {
     scrollYProgress,
     isLargeScreen
       ? [0, 0.15, 0.4, 0.5, 1] // Desktop: completa a 0.5
-      : [0, 0.3, 0.6, 1], // Mobile: timing semplificato
+      : [0, 0.2, 0.6, 1, 1], // Mobile: completa al centro
     isLargeScreen
-      ? [-200, -120, -40, 0, 0] // Desktop: movimento ridotto
-      : [-150, -80, -20, 0] // Mobile: movimento ancora più ridotto
+      ? [-250, -150, -50, 0, 0] // Desktop: griglia perfetta centrata
+      : [-250, -150, -50, 0, 0] // Mobile: centrato perfetto
   );
   const centerColumnYSpring = useSpring(centerColumnY, {
-    damping: 90,
-    stiffness: 300,
-    mass: 0.3,
+    damping: 80,
+    stiffness: 400,
+    mass: 0.2,
   });
 
   const leftColumnWidth = useTransform(
@@ -428,13 +412,13 @@ function ProjectsGrid() {
 
   const desktopScale = useTransform(
     scrollYProgress,
-    [0, 0.25, 0.5, 1],
-    [1.8, 1.4, 1.1, 1]
+    [0, 0.15, 0.25, 0.35, 0.45, 0.5, 1],
+    [2.8, 2.2, 1.6, 1.2, 1.05, 1, 1]
   );
   const desktopScaleSpring = useSpring(desktopScale, {
-    damping: 90,
-    stiffness: 200,
-    mass: 0.5,
+    damping: 70,
+    stiffness: 300,
+    mass: 0.3,
   });
 
   if (!isLargeScreen) {
@@ -442,15 +426,14 @@ function ProjectsGrid() {
     return (
       <div
         ref={ref}
-        className="w-full h-[60vh] md:h-screen flex items-center justify-center relative overflow-x-hidden"
+        className="w-full h-[60vh] md:h-screen flex items-center justify-center overflow-hidden relative"
       >
         <motion.div
           className="flex gap-1 w-full h-full p-4 justify-center items-center"
           style={{
-            scale: isLoaded ? mobileScaleSpring : 1,
+            scale: mobileScaleSpring,
             transformStyle: 'preserve-3d',
             willChange: 'transform',
-            touchAction: 'auto',
           }}
         >
           {/* Prima colonna (sinistra) - mobile */}
@@ -464,7 +447,7 @@ function ProjectsGrid() {
             {[0, 3, 6].map(index => (
               <div
                 key={index}
-                className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
+                className="relative overflow-hidden rounded-lg aspect-square"
               >
                 <OptimizedImage
                   src={gridImages[index]}
@@ -491,7 +474,7 @@ function ProjectsGrid() {
             {[1, 4, 7].map(index => (
               <div
                 key={index}
-                className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
+                className="relative overflow-hidden rounded-lg aspect-square"
               >
                 <OptimizedImage
                   src={gridImages[index]}
@@ -517,7 +500,7 @@ function ProjectsGrid() {
             {[2, 5, 8].map(index => (
               <div
                 key={index}
-                className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
+                className="relative overflow-hidden rounded-lg aspect-square"
               >
                 <OptimizedImage
                   src={gridImages[index]}
@@ -548,15 +531,14 @@ function ProjectsGrid() {
   return (
     <div
       ref={ref}
-      className="w-full h-screen flex items-center justify-center relative overflow-x-hidden"
+      className="w-full h-screen flex items-center justify-center overflow-hidden relative"
     >
       <motion.div
         className="flex gap-2 w-full h-full lg:p-4"
         style={{
-          scale: isLoaded ? desktopScaleSpring : 1,
+          scale: desktopScaleSpring,
           transformStyle: 'preserve-3d',
           willChange: 'transform',
-          touchAction: 'auto',
         }}
       >
         {/* Prima colonna (sinistra) */}
@@ -570,7 +552,7 @@ function ProjectsGrid() {
           {[0, 3, 6].map(index => (
             <div
               key={index}
-              className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
+              className="relative overflow-hidden rounded-lg aspect-square"
             >
               <OptimizedImage
                 src={gridImages[index]}
@@ -597,7 +579,7 @@ function ProjectsGrid() {
           {[1, 4, 7].map(index => (
             <div
               key={index}
-              className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
+              className="relative overflow-hidden rounded-lg aspect-square"
             >
               <OptimizedImage
                 src={gridImages[index]}
@@ -623,7 +605,7 @@ function ProjectsGrid() {
           {[2, 5, 8].map(index => (
             <div
               key={index}
-              className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
+              className="relative overflow-hidden rounded-lg aspect-square"
             >
               <OptimizedImage
                 src={gridImages[index]}
