@@ -6,7 +6,7 @@ export default function ScrollingBanner() {
   return (
     <div
       role="banner"
-      className="w-full bg-red-600 overflow-hidden h-32 md:h-48"
+      className="relative w-full bg-red-600 overflow-hidden h-32 md:h-48"
     >
       {/* Testo scorrevole massimo che riempie tutto lo spazio */}
       <div className="flex items-center justify-center h-full">
@@ -23,9 +23,9 @@ export default function ScrollingBanner() {
       {/* Fade rosso ai bordi */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Fade sinistro */}
-        <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-red-600 to-transparent z-20"></div>
+        <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-red-600 to-transparent"></div>
         {/* Fade destro */}
-        <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-red-600 to-transparent z-20"></div>
+        <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-red-600 to-transparent"></div>
       </div>
     </div>
   );
