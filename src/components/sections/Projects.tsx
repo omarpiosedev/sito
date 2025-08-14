@@ -73,7 +73,7 @@ const Projects = memo(() => {
 
       <section
         id="projects"
-        className="relative w-full bg-black text-white overflow-hidden"
+        className="relative w-full bg-black text-white overflow-x-hidden"
       >
         {projectsData.map((project, index) => (
           <ProjectCard
@@ -99,17 +99,31 @@ interface ProjectCardProps {
 
 function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
   const ref = useRef(null);
-  const [isLargeScreen, setIsLargeScreen] = useState(true);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const checkScreenSize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
     };
 
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
+    // Ritardo per evitare flash delle animazioni
+    const timer = setTimeout(() => {
+      checkScreenSize();
+      setIsLoaded(true);
+    }, 100);
 
-    return () => window.removeEventListener('resize', checkScreenSize);
+    const debouncedResize = () => {
+      clearTimeout(timer);
+      setTimeout(checkScreenSize, 150);
+    };
+
+    window.addEventListener('resize', debouncedResize);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', debouncedResize);
+    };
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -117,53 +131,47 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
     offset: ['start end', 'center center'],
   });
 
-  // Animazioni drammatiche su tutti i device!
+  // Animazioni ottimizzate per mobile senza overflow
   const rotateRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    isLargeScreen
+    isLoaded && isLargeScreen
       ? isReversed
-        ? [-8, 0]
-        : [8, 0]
-      : isReversed
-        ? [-6, 0]
-        : [6, 0]
-  ); // Rotazione forte anche su mobile
+        ? [-4, 0]
+        : [4, 0]
+      : [0, 0] // Nessuna rotazione se non caricato o su mobile
+  ); // Rotazione ridotta per evitare problemi
 
   const xRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    isLargeScreen
+    isLoaded && isLargeScreen
       ? isReversed
-        ? [-50, 25]
-        : [50, -25]
-      : isReversed
-        ? [-30, 15]
-        : [30, -15]
-  ); // Movimento X drammatico
+        ? [-15, 8]
+        : [15, -8]
+      : [0, 0] // Nessun movimento X su mobile per evitare overflow
+  ); // Movimento X controllato
 
   const yRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    isLargeScreen ? (isReversed ? [-50, 25] : [-50, 25]) : [-30, 15]
-  ); // Movimento Y drammatico
+    isLoaded ? (isLargeScreen ? (isReversed ? [-15, 8] : [-15, 8]) : [-5, 2]) : [0, 0]
+  ); // Movimento Y ridotto
 
-  const rotate = useSpring(rotateRaw, { damping: 15, stiffness: 120 }); // Spring più reattivi
-  const x = useSpring(xRaw, { damping: 15, stiffness: 120 });
-  const y = useSpring(yRaw, { damping: 15, stiffness: 120 });
+  const rotate = useSpring(rotateRaw, { damping: 40, stiffness: 80 }); // Spring più stabili
+  const x = useSpring(xRaw, { damping: 40, stiffness: 80 });
+  const y = useSpring(yRaw, { damping: 40, stiffness: 80 });
 
-  // Text animations - drammatiche anche su mobile
+  // Text animations - controllate per mobile
   const textXRaw = useTransform(
     scrollYProgress,
     [0, 1],
-    isLargeScreen
+    isLoaded && isLargeScreen
       ? isReversed
-        ? [60, 0]
-        : [-60, 0]
-      : isReversed
-        ? [40, 0]
-        : [-40, 0]
-  ); // Movimento testo drammatico
+        ? [20, 0]
+        : [-20, 0]
+      : [0, 0] // Nessun movimento testo su mobile
+  ); // Movimento testo controllato
 
   const textOpacityRaw = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
 
@@ -176,12 +184,11 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
   return (
     <div
       ref={ref}
-      className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center px-6 py-4 md:py-6 lg:py-8 md:px-16 lg:px-6 xl:px-8 2xl:px-12 overflow-hidden"
-      style={{ contain: 'layout' }} // Contiene gli elementi dentro il container
+      className="relative min-h-[70vh] lg:min-h-[90vh] flex items-center px-4 py-4 md:py-6 md:px-8 lg:py-8 lg:px-6 xl:px-8 2xl:px-12 overflow-hidden"
     >
       <div className="w-full max-w-full mx-auto">
         <div
-          className={`grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-center`}
+          className={`grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 items-center max-w-full`}
         >
           {/* Text Content */}
           <motion.div
@@ -243,7 +250,7 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
 
           {/* Project Image */}
           <motion.div
-            className={`relative overflow-hidden rounded-2xl lg:col-span-3 mx-auto lg:mx-0 ${
+            className={`relative overflow-hidden rounded-2xl lg:col-span-3 mx-auto lg:mx-0 w-full max-w-full ${
               isReversed
                 ? 'lg:col-start-1 lg:order-1 lg:mr-2 xl:mr-3 2xl:mr-4'
                 : 'lg:col-start-3 lg:order-2 lg:ml-2 xl:ml-3 2xl:ml-4'
@@ -253,7 +260,7 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
               rotate,
               x,
               y,
-              maxWidth: isLargeScreen ? 'none' : '100%',
+              willChange: 'transform',
             }}
           >
             <div className="w-full h-[300px] md:h-[400px] lg:h-[600px] bg-gradient-to-br from-red-900/20 to-red-500/10 rounded-2xl overflow-hidden shadow-2xl">
@@ -280,17 +287,31 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
 
 function ProjectsGrid() {
   const ref = useRef(null);
-  const [isLargeScreen, setIsLargeScreen] = useState(true);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const checkScreenSize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
     };
 
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
+    // Ritardo per evitare flash delle animazioni
+    const timer = setTimeout(() => {
+      checkScreenSize();
+      setIsLoaded(true);
+    }, 100);
 
-    return () => window.removeEventListener('resize', checkScreenSize);
+    const debouncedResize = () => {
+      clearTimeout(timer);
+      setTimeout(checkScreenSize, 150);
+    };
+
+    window.addEventListener('resize', debouncedResize);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', debouncedResize);
+    };
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -327,12 +348,14 @@ function ProjectsGrid() {
     scrollYProgress,
     isLargeScreen
       ? [0, 0.15, 0.25, 0.35, 0.45, 0.5, 1] // Desktop timing
-      : [0, 0.2, 0.4, 0.6, 0.8, 1, 1], // Mobile timing - completa al centro
-    [2.8, 2.2, 1.6, 1.2, 1.05, 1, 1]
+      : [0, 0.3, 0.6, 1], // Mobile timing semplificato
+    isLargeScreen 
+      ? [2.8, 2.2, 1.6, 1.2, 1.05, 1, 1]
+      : [2.2, 1.5, 1.1, 1] // Scale ridotte per mobile
   );
   const mobileScaleSpring = useSpring(mobileScale, {
-    damping: 70,
-    stiffness: 300,
+    damping: 80,
+    stiffness: 200,
   });
 
   // Animazioni aggiuntive per mobile - sempre chiamate (non utilizzate se isLargeScreen)
@@ -355,15 +378,15 @@ function ProjectsGrid() {
     scrollYProgress,
     isLargeScreen
       ? [0, 0.15, 0.4, 0.5, 1] // Desktop: completa a 0.5
-      : [0, 0.2, 0.6, 1, 1], // Mobile: completa al centro
+      : [0, 0.3, 0.6, 1], // Mobile: timing semplificato
     isLargeScreen
-      ? [-250, -150, -50, 0, 0] // Desktop: griglia perfetta centrata
-      : [-250, -150, -50, 0, 0] // Mobile: centrato perfetto
+      ? [-200, -120, -40, 0, 0] // Desktop: movimento ridotto
+      : [-150, -80, -20, 0] // Mobile: movimento ancora più ridotto
   );
   const centerColumnYSpring = useSpring(centerColumnY, {
-    damping: 80,
-    stiffness: 400,
-    mass: 0.2,
+    damping: 90,
+    stiffness: 300,
+    mass: 0.3,
   });
 
   const leftColumnWidth = useTransform(
@@ -412,13 +435,13 @@ function ProjectsGrid() {
 
   const desktopScale = useTransform(
     scrollYProgress,
-    [0, 0.15, 0.25, 0.35, 0.45, 0.5, 1],
-    [2.8, 2.2, 1.6, 1.2, 1.05, 1, 1]
+    [0, 0.2, 0.35, 0.5, 1],
+    [2.2, 1.8, 1.3, 1, 1]
   );
   const desktopScaleSpring = useSpring(desktopScale, {
-    damping: 70,
-    stiffness: 300,
-    mass: 0.3,
+    damping: 80,
+    stiffness: 250,
+    mass: 0.4,
   });
 
   if (!isLargeScreen) {
