@@ -62,6 +62,8 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
   themeColor: '#000000',
 };
 
@@ -71,14 +73,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="no-horizontal-overflow">
       <head></head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black no-horizontal-overflow`}
       >
         <NavigationProvider>
           <Navbar />
-          {children}
+          <div className="safe-area">
+            {children}
+          </div>
         </NavigationProvider>
         <SpeedInsights />
       </body>
