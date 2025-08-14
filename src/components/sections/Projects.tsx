@@ -243,7 +243,7 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
 
           {/* Project Image */}
           <motion.div
-            className={`relative overflow-hidden rounded-2xl lg:col-span-3 mx-auto lg:mx-0 w-full max-w-full ${
+            className={`relative overflow-hidden rounded-2xl lg:col-span-3 mx-auto lg:mx-0 w-full max-w-full min-w-0 ${
               isReversed
                 ? 'lg:col-start-1 lg:order-1 lg:mr-2 xl:mr-3 2xl:mr-4'
                 : 'lg:col-start-3 lg:order-2 lg:ml-2 xl:ml-3 2xl:ml-4'
@@ -256,7 +256,7 @@ function ProjectCard({ project, isReversed = false }: ProjectCardProps) {
               willChange: 'transform',
             }}
           >
-            <div className="w-full h-[300px] md:h-[400px] lg:h-[600px] bg-gradient-to-br from-red-900/20 to-red-500/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="w-full h-[300px] md:h-[400px] lg:h-[600px] bg-gradient-to-br from-red-900/20 to-red-500/10 rounded-2xl overflow-hidden shadow-2xl max-w-full min-w-0">
               <OptimizedImage
                 src={project.image}
                 alt={project.title}
@@ -464,7 +464,7 @@ function ProjectsGrid() {
             {[0, 3, 6].map(index => (
               <div
                 key={index}
-                className="relative overflow-hidden rounded-lg aspect-square"
+                className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
               >
                 <OptimizedImage
                   src={gridImages[index]}
@@ -491,7 +491,7 @@ function ProjectsGrid() {
             {[1, 4, 7].map(index => (
               <div
                 key={index}
-                className="relative overflow-hidden rounded-lg aspect-square"
+                className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
               >
                 <OptimizedImage
                   src={gridImages[index]}
@@ -517,7 +517,7 @@ function ProjectsGrid() {
             {[2, 5, 8].map(index => (
               <div
                 key={index}
-                className="relative overflow-hidden rounded-lg aspect-square"
+                className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
               >
                 <OptimizedImage
                   src={gridImages[index]}
@@ -570,7 +570,7 @@ function ProjectsGrid() {
           {[0, 3, 6].map(index => (
             <div
               key={index}
-              className="relative overflow-hidden rounded-lg aspect-square"
+              className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
             >
               <OptimizedImage
                 src={gridImages[index]}
@@ -597,7 +597,7 @@ function ProjectsGrid() {
           {[1, 4, 7].map(index => (
             <div
               key={index}
-              className="relative overflow-hidden rounded-lg aspect-square"
+              className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
             >
               <OptimizedImage
                 src={gridImages[index]}
@@ -623,7 +623,7 @@ function ProjectsGrid() {
           {[2, 5, 8].map(index => (
             <div
               key={index}
-              className="relative overflow-hidden rounded-lg aspect-square"
+              className="relative overflow-hidden rounded-lg aspect-square w-full max-w-full min-w-0"
             >
               <OptimizedImage
                 src={gridImages[index]}
