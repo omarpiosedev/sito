@@ -6,7 +6,7 @@ export default function ScrollingBanner() {
   return (
     <div
       role="banner"
-      className="fixed bottom-0 left-0 right-0 bg-red-600 overflow-hidden z-0 h-32 md:h-48"
+      className="w-full bg-red-600 overflow-hidden h-32 md:h-48"
     >
       {/* Testo scorrevole massimo che riempie tutto lo spazio */}
       <div className="flex items-center justify-center h-full">

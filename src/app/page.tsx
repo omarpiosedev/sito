@@ -12,8 +12,7 @@ import ScrollingBanner from '@/components/sections/ScrollingBanner';
 export default function Home() {
   return (
     <>
-      <ScrollingBanner />
-      <main className="relative z-10">
+      <main className="relative">
         <div className="bg-black">
           <Hero />
           <SectionDivider
@@ -54,8 +53,7 @@ export default function Home() {
           <Contact />
           <Footer />
         </div>
-        {/* Spazio trasparente per rivelare il banner sottostante */}
-        <div className="h-48"></div>
+        <ScrollingBanner />
       </main>
     </>
   );
